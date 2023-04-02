@@ -1,0 +1,2247 @@
+Option Compare Database 'cyskct   '(Option Compare Database 'cyskct 可能是注释，但是它没有被注释符号（'）注释掉，因此可能会导致编译错误。)
+     
+     Private Declare Function MessageBoxTimeout Lib "user32" Alias "MessageBoxTimeoutA" (ByVal hwnd As Long, ByVal lpText As String, ByVal lpCaption As String, ByVal wType As Long, ByVal wlange As Long, ByVal dwTimeout As Long) As Long
+     Public cishu As Integer, tishu As Integer, tishu0 As Long, tishu0cishu As Long, daida As Integer, daidaY As Integer, zuoda As Integer '全局变量
+     
+     Public ceyanID As Long, imagelj As String, smzhlj0s0 As String, datishu As Long, Emp0 As String, Emp1 As String, _
+        jishi0 As Date, jishi As Date, kssj As Date, jssj As Date, fz0 As Date, zttime As Date, ztks As Date, yxtxt As String, ocl As Boolean, _
+        cyfs As String, rid As Long, yhm As String, kmh As Long, jsh As Long, nam As String, smzh As String, kmm As String, cpms As String, _
+        playlj As String, kmc As String, yid As Long '全局变量       
+  '(imagelj, smzhlj0s0, Emp0, Emp1, yxtxt, cyfs, nam, smzh, kmm, cpms, playlj, kmc 这些变量可能没有被定义，或者它们可能定义在其他模块中，这可能导致编译错误或运行时错误。)
+        
+     '---------声明Call keybd_event(17, 0, 0, 0)----------
+     Private Declare Sub keybd_event Lib "user32.dll" (ByVal bVk As Byte, ByVal bScan As Byte, ByVal dwFlags As Long, ByVal dwExtraInfo As Long)
+     
+     '无操作退出------------------------------------------------------------------------------------- -----------------------------
+     'Option Explicit
+     Private Type LASTINPUTINFO
+       cbSize As Long
+       dwTime As Long
+     End Type
+     '之前最后一次键盘鼠标操作时间
+     Private Declare Function GetLastInputInfo Lib "user32" (plii As LASTINPUTINFO) As Boolean
+     '从开机以来过去的时间
+     Private Declare Function GetTickCount Lib "kernel32" () As Long
+     Private m_LII As LASTINPUTINFO
+     '无操作退出------------------------------------------------------------------------------------------------------------------
+     
+     Private Declare Function GetForegroundWindow Lib "user32" () As Long  ' Alias "GetForegroundWindow"  '获取系统窗口句柄标题。
+     Private Declare Function GetActiveWindow Lib "user32" () As Long  ' Alias "GetActiveWindow"
+     Private Declare Function GetWindowTextLength Lib "user32" Alias "GetWindowTextLengthA" (ByVal hwnd As Long) As Long
+     Private Declare Function GetWindowText Lib "user32" Alias "GetWindowTextA" (ByVal hwnd As Long, ByVal lpString As String, ByVal cch As Long) As Long
+     Public dj As Byte, lb As Byte, zuxu As Long, tsjw As Boolean, tsls As Boolean
+     Public Tlong1 As Long, s As String  '获取系统窗口句柄标题.
+     Public t, t1, t2   '(t, t1, t2 这三个变量也没有被定义，这可能会导致编译错误或运行时错误。)
+     
+
+
+
+在 keybd_event 函数声明中，参数类型应该为 Long 而不是 Byte，这可能会导致类型错误。
+LASTINPUTINFO 结构体应该被定义在代码的开头部分，因为它被其他函数使用。如果没有定义，这可能导致编译错误。
+GetLastInputInfo 和 GetTickCount 函数的返回类型应该是 LongPtr，而不是 Long，这是为了避免在 64 位 Windows 系统上出现问题。*/
+
+
+
+Private Sub Box1_Click()
+     'MsgBox 1
+     If Me.暂停 Then
+        Me.暂停.Value = False
+        Me.暂停.SetFocus '防止暂停框有焦点不能隐藏而报错。
+        'Me.Box1.Visible = False
+        Me.Box1.BackStyle = 0  '背景透明化。
+        Me.Title.Visible = True
+        Me.交卷.Visible = True
+        'Me.Box1.BorderStyle = 1
+        Me.已暂停.Value = ""
+        
+        If ztks Then zttime = zttime + (Now - ztks)
+        ztks = 0
+     End If
+     
+End Sub
+
+Private Sub Close_Click()
+     Call Close_0
+     
+End Sub
+
+Private Sub Close_0()
+     
+     If IsYlwjcct("学生端") Then
+        '------------------------------------------------------------------------------------------
+        Dim objWMIService, colProcesses  '检测程序是否已经在运行。
+        Set objWMIService = GetObject("WinMgmts:")
+        Set colProcesses = objWMIService.ExecQuery("Select * From Win32_Process where name = 'SuperMemo.exe' ")
+        Dim CcP As Integer
+        CcP = CInt(colProcesses.Count)
+        If CcP Then  '在运行。
+           ''偶有被sm遮挡，在此先强化置顶。无效。
+           'Me.SetFocus
+           'SetWindowPos hwnd, -1, 0, 0, 0, 0, &H1 Or &H2  '窗体置顶。
+           
+           'On Error Resume Next
+           'AppActivate "SuperMemo", True   '激活已运行的程序。
+        End If
+     End If
+     
+     MMStop (playlj) '关闭上一页播放的余音。
+     
+     If 0 Then
+     If IsYlwjcct("学生端") Then
+        '------------------------------------------------------------------------------------------
+        'Dim objWMIService, colProcesses  '检测程序是否已经在运行。
+        Set objWMIService = GetObject("WinMgmts:")
+        Set colProcesses = objWMIService.ExecQuery("Select * From Win32_Process where name = 'SuperMemo.exe' ")
+        'Dim CcP As Integer
+        CcP = CInt(colProcesses.Count)
+        If CcP Then  '在运行。
+           ''偶有被sm遮挡，在此先强化置顶。无效。
+           'Me.SetFocus
+           'SetWindowPos hwnd, -1, 0, 0, 0, 0, &H1 Or &H2  '窗体置顶。
+           
+           On Error Resume Next '必要
+           AppActivate "SuperMemo", True   '激活已运行的程序。
+           
+           Tlong1 = GetWindowTextLength(GetForegroundWindow) + 1
+           s = String(Tlong1, Chr(0))
+           GetWindowText GetForegroundWindow, s, Tlong1
+           Do Until s Like "程序选项*"  '比对窗口标题。
+              DoEvents
+              Call keybd_event(117, 0, 0, 0) 'F6
+              Call keybd_event(117, 0, 2, 0)
+              Sleep (200)
+              Tlong1 = GetWindowTextLength(GetForegroundWindow) + 1
+              s = String(Tlong1, Chr(0))
+              GetWindowText GetForegroundWindow, s, Tlong1
+           Loop
+           
+           Sleep (200)
+           Call keybd_event(39, 0, 0, 0) 'Right Arrow
+           Call keybd_event(39, 0, 2, 0)
+           Call keybd_event(39, 0, 0, 0) 'Right Arrow
+           Call keybd_event(39, 0, 2, 0)
+           Call keybd_event(39, 0, 0, 0) 'Right Arrow
+           Call keybd_event(39, 0, 2, 0) '跳转到“音频”选项卡。
+           
+           Call keybd_event(18, 0, 0, 0) 'Alt
+           Call keybd_event(83, 0, 0, 0) 'S
+           Call keybd_event(83, 0, 2, 0) '无录音（不自动播放音频）。
+           Call keybd_event(18, 0, 2, 0)
+           
+           Call keybd_event(13, 0, 0, 0) 'Enter
+           Call keybd_event(13, 0, 2, 0)
+           
+           Sleep (200)
+           Tlong1 = GetWindowTextLength(GetForegroundWindow) + 1
+           s = String(Tlong1, Chr(0))
+           GetWindowText GetForegroundWindow, s, Tlong1
+           If s Like "程序选项*" Then  '解决偶尔“程序选项”未关闭。
+              Do Until s Like "SuperMemo UX *"  '比对窗口标题。
+                 DoEvents
+                 Call keybd_event(27, 0, 0, 0) 'Esc
+                 Call keybd_event(27, 0, 2, 0)
+                 'Call keybd_event(13, 0, 0, 0) 'Enter
+                 'Call keybd_event(13, 0, 2, 0)
+                 Sleep (200)
+                 Tlong1 = GetWindowTextLength(GetForegroundWindow) + 1
+                 s = String(Tlong1, Chr(0))
+                 GetWindowText GetForegroundWindow, s, Tlong1
+              Loop
+           End If
+        End If
+        '------------------------------------------------------------------------------------------
+     End If
+     End If
+     
+     On Error Resume Next '必要 避免报错卡死。
+     
+     If IsYlwjcct("学生端") Then
+        If ocl Then DoCmd.RunSQL yxtxt & Nz(Forms!学生端.端名) & "','sm测验随课','Close_Click 关闭。','" & Now() & "')"
+        
+        If Emp1 = "背默拆词" And Nz(DCount("*", "sm测验记录题页_今日当前_待答_题卷", "类别='背默拆句'")) Then
+           lb = 2 '类别
+        ElseIf Emp1 = "背默拆句" And Nz(DCount("*", "sm测验记录题页_今日当前_待答_题卷", "类别='背默文序'")) Then
+           lb = 3
+        Else
+           lb = 0
+        End If
+        
+        DoCmd.Close acForm, "sm测验随课"
+        
+        If lb Then
+           If ocl Then DoCmd.RunSQL yxtxt & Nz(Forms!学生端.端名) & "','sm测验随课','Close_Click 重启窗体 " & lb & "sm测验随课','" & Now() & "')"
+           
+           DoCmd.OpenForm "重启窗体", , , , , acIcon, lb & "sm测验随课" '
+        End If
+        
+        If 0 And Forms!学生端.测练.Visible Then
+           Dim dct As Long
+           dct = Nz(DCount("*", "sm测验答题_当前_d", "(IsNull(上次复习) or 上次复习>=#" & Date & "#) and (IsNull([评分]) or nz([正确])<1) and 类别='作答'")) '待测题数。
+           If dct = 0 Then '无题。
+              'Forms!学生端.测练.Visible = False
+           End If
+        End If
+     End If
+     
+     DoCmd.Close acForm, "sm测验随课"
+     
+End Sub
+
+Private Sub D1_Click()
+     Dim h As Integer, k As Integer
+     h = val(Nz(Me.D1.Caption)) + val(Nz(Me.D2.Caption)) + val(Nz(Me.D3.Caption))
+     'k = Nz(Me.D1.Caption) = "" + Nz(Me.D2.Caption) = "" + Nz(Me.D3.Caption) = ""
+     k = Nz(Me.D1.Caption = "") + Nz(Me.D2.Caption = "") + Nz(Me.D3.Caption = "")
+     If k = 0 Then
+        Me.D1.Caption = ""
+        Me.D2.Caption = ""
+        Me.D3.Caption = ""
+        Me.答1.Value = Null
+        Me.答2.Value = Null
+        Me.答3.Value = Null
+     ElseIf Me.D1.Caption = "" Then
+        Me.D1.Caption = Switch(h = 0, 1, h = 1, 2, h = 2, 1, h = 3, IIf(k = -1, 3, 1), h = 4, 2, h = 5, 1, h = 6, Null)
+        Me.答1.Value = Me.D1.Caption
+     Else
+        Me.D1.Caption = ""
+        Me.答1.Value = Null
+     End If
+     Me.Tab.SetFocus 'If Me.交卷.Visible Then Me.交卷.SetFocus
+     
+End Sub
+
+Private Sub D2_Click()
+     Dim h As Integer, k As Integer
+     h = val(Nz(Me.D1.Caption)) + val(Nz(Me.D2.Caption)) + val(Nz(Me.D3.Caption))
+     k = Nz(Me.D1.Caption = "") + Nz(Me.D2.Caption = "") + Nz(Me.D3.Caption = "")
+     If k = 0 Then
+        Me.D1.Caption = ""
+        Me.D2.Caption = ""
+        Me.D3.Caption = ""
+        Me.答1.Value = Null
+        Me.答2.Value = Null
+        Me.答3.Value = Null
+     ElseIf Me.D2.Caption = "" Then
+        Me.D2.Caption = Switch(h = 0, 1, h = 1, 2, h = 2, 1, h = 3, IIf(k = -1, 3, 1), h = 4, 2, h = 5, 1, h = 6, Null)
+        Me.答2.Value = Me.D2.Caption
+     Else
+        Me.D2.Caption = ""
+        Me.答2.Value = Null
+     End If
+     Me.Tab.SetFocus 'If Me.交卷.Visible Then Me.交卷.SetFocus
+     
+End Sub
+
+Private Sub D3_Click()
+     Dim h As Integer, k As Integer
+     h = val(Nz(Me.D1.Caption)) + val(Nz(Me.D2.Caption)) + val(Nz(Me.D3.Caption))
+     k = Nz(Me.D1.Caption = "") + Nz(Me.D2.Caption = "") + Nz(Me.D3.Caption = "")
+     If k = 0 Then
+        Me.D1.Caption = ""
+        Me.D2.Caption = ""
+        Me.D3.Caption = ""
+        Me.答1.Value = Null
+        Me.答2.Value = Null
+        Me.答3.Value = Null
+     ElseIf Me.D3.Caption = "" Then
+        Me.D3.Caption = Switch(h = 0, 1, h = 1, 2, h = 2, 1, h = 3, IIf(k = -1, 3, 1), h = 4, 2, h = 5, 1, h = 6, Null)
+        Me.答3.Value = Me.D3.Caption
+     Else
+        Me.D3.Caption = ""
+        Me.答3.Value = Null
+     End If
+     Me.Tab.SetFocus 'If Me.交卷.Visible Then Me.交卷.SetFocus
+     
+End Sub
+
+Private Sub Form_Current()
+     On Error Resume Next '避免空表报错。
+     
+     If tsls Then
+     '音频自动关闭及自动播放。---------------------------------------------------------------------
+     playlj = "Z:\Courseware\sm\英语\" & kmc & "\" & kmc & "\override\media\" & Format(yid, "00000") & "a.mp3" 'q.mp3为问音，a.mp3为答音。
+     MMStop (playlj) '关闭上一页播放的余音。
+     'mciSendString "stop " & playlj, vbNullString, 0, 0
+     'mciSendString "close " & playlj, vbNullString, 0, 0
+     Me.播放暂停.Value = False  '弹起。
+     End If
+     
+     kmc = [课程名称]
+     yid = [页ID]
+     playlj = "Z:\Courseware\sm\英语\" & kmc & "\" & kmc & "\override\media\" & Format(yid, "00000") & "a.mp3" 'q.mp3为问音，a.mp3为答音。
+     'MessageBoxTimeout Me.hwnd, FileFolderExists(playlj), "学科训练室", 64, 0, 800
+     
+     If Nz(Me.评价) Like "*√*" And [区别] = "全文" Then
+        Me.查看.Enabled = True
+     Else
+        Me.查看.Enabled = False
+     End If
+     
+     If Nz(Me.评价) Like "*√*" And Len([问音]) And Me.暂停 = False Then
+        Me.播放.Enabled = True
+        Me.播放暂停.Enabled = True
+     
+        'Me.播放.Visible = True
+        'Me.播放暂停.Visible = True
+        
+        'Me.播放.Caption = "播放"
+        'If [音位] = "自问" Then
+        
+        'Call 播放_Click '自动播放。
+        
+        'Me.播放暂停.Visible = True '隐藏。
+     Else
+        Me.播放.Enabled = False
+        Me.播放暂停.Enabled = False
+        
+        'Me.播放.Visible = False '隐藏。
+           'If Me.播放.Caption = "停止" Then Call 播放_Click
+        'Me.播放暂停.Visible = False
+     End If
+     '音频自动关闭及自动播放。---------------------------------------------------------------------
+     
+     
+End Sub
+
+Private Sub Form_Load()
+     
+     If IsYlwjcct("学生端") Then If ocl Then DoCmd.RunSQL yxtxt & Nz(Forms!学生端.端名) & "','sm测验随课','Form_Load 用户名科目号','" & Now() & "')"
+     
+     'ShellEx ("Z:\Program\SuperMemo UX\SuperMemo_Min.vbs")  'sm最小化，以停止sm播放音频。迟滞。在此会造成启动残影。
+     'DoEvents
+     'Sleep (3000)
+     
+     'On Error Resume Next
+     'If Nz(DCount("*", "sm测验记录题页_句", "IsNull(词序)")) = 0 Then Exit Sub
+     
+     'Me.D1.Caption = Nz(Me.答1)
+     'Me.D2.Caption = Nz(Me.答2)
+     'Me.D3.Caption = Nz(Me.答3)
+     
+     'If IsYlwjcct("课堂记录") Then
+     '   Me.用户名.Value = Forms!课堂记录![计时 子窗体].Form!用户名
+     '   Me.科目号.Value = Forms!课堂记录![计时 子窗体].Form!科目号
+     'ElseIf IsYlwjcct("学生端") Then
+     '   Me.用户名.Value = Forms!学生端.用户名
+     '   Me.科目号.Value = Forms!学生端.科目号
+     'Else
+     '   Me.用户名.Value = "20500"
+     '   Me.科目号.Value = 1
+     'End If
+     
+     rid = Nz(DLookup("人员ID", "学生端"))
+     yhm = Nz(DLookup("用户名", "学生端"))
+     kmh = Nz(DLookup("科目号", "学生端"))
+     jsh = Nz(DLookup("计时号", "学生端"))
+     
+     If IsYlwjcct("学生端") Then
+        cpms = Nz(DLookup("测评模式", "科目设置_当前"))
+        'If cpms = "" Then cpms = "1" '测评模式默认值，新班新人默认测多一点。在此不起作用。
+        
+        If 0 And cpms Like "-*" Then
+           Me.播放.Visible = True
+           Me.播放暂停.Visible = True
+        Else
+           Me.播放.Visible = False
+           Me.播放暂停.Visible = False
+        End If
+        
+        Dim tishuZ As Long, tishuY As Long, tishuX As Long
+        On Error Resume Next '必要，偶有错卡。
+        tishuZ = Nz(DCount("*", "sm测验记录题页_今日当前", "nz(类别) like '*" & Emp1 & "*'")) '题数总
+        tishuY = Nz(DLookup("题数", "sm测验记录_随课_今日当前", "方式='" & Emp1 & "'")) '已写入过的题数
+        If tishuZ < tishuY Then tishuZ = tishuY '若小则保留原。
+        
+        DoCmd.SetWarnings False
+        cishu = Nz(DLookup("次数", "sm测验记录_随课_今日当前", "方式='" & Emp1 & "'"))
+        If cishu Then
+           DoCmd.RunSQL "update sm测验记录_随课_今日当前 set 次数=" & cishu + 1 & ", 题数=" & tishuZ & " where 方式='" & Emp1 & "'" '方式='随课测验'"
+           
+           If ocl Then DoCmd.RunSQL yxtxt & Nz(Forms!学生端.端名) & "','sm测验随课','Form_Load update_sm测验记录_随课…次数','" & Now() & "')"
+        Else
+           DoCmd.RunSQL "insert into sm测验记录表(计时号,人员ID,用户名,科目号,方式,次数,题数,开始时间,结束时间) values('" & jsh & "','" & rid & "','" & yhm _
+                 & "','" & kmh & "','" & Emp1 & "','1','" & tishuZ & "',#" & Now & "#,#" & Now & "#);"
+           
+           If ocl Then DoCmd.RunSQL yxtxt & Nz(Forms!学生端.端名) & "','sm测验随课','Form_Load into_sm测验记录表','" & Now() & "')"
+        End If
+        
+        On Error Resume Next '偶有错卡。
+        tishuX = Nz(DCount("*", "sm测验记录题页_今日当前_待答_题卷")) '题数原
+        If Emp1 Like "*背默*" Or tishuX > 5 Then Me.Close.Visible = False  '背默、闯关、题数有积压，则隐藏关闭按钮，强制答题。闯关模式在学生端控制隐藏。
+        'If cpms Like "-*" Then '测模强制过关模式，检测进入。
+        
+        'zuoda = Nz(DCount("*", "sm测验记录题页_今日当前_待答_题卷", "IsNull(文句) Or IsNull(显示)"))
+        'If tishu = zuoda Then Call Forms!学生端.测验随课制题_Click
+        'Forms!sm测验随课.RecordSource = "sm测验记录题页_今日当前_待答_题卷"  '指定窗体数据源
+        On Error Resume Next '偶有错卡。
+        DoCmd.RunSQL "update sm测验记录题页_今日当前_待答_题卷 set 已写入= 0 where IsNull(已写入)" '写入0用于标记已在测验窗体中打开过的题，可计入提交按钮的数量。
+        
+        daidaY = Nz(DCount("*", "sm测验记录题页_今日当前_待答_题卷")) ', "(IsNull(得分) Or IsNull(已写入)=False and (IsNull(作答) Or 有错)) and nz(类别) like '*" & Emp1 & "*'")) '未答的、待纠错的。
+        Me.题数.Value = daidaY  'daida & " /" & tishuX - daida & " /" & tishuX
+        Me.交卷.Caption = daidaY & " " & "提交" 'Chr(13) & Chr(10) & "( 待答:" & daidaY & " )"
+        
+        'If jishi Then Me.速率.Value = (tishuX - daida) / (jishi * 1440)  '初打开时不需要。
+        'DoCmd.RunSQL "update 学生端 set 测验随课= 2"  '宣示运行中。
+     'Else  '单窗体调试。
+     '   If tishu = 0 Then Me.Close.Visible = True 'Me.交卷.Caption = "关闭"
+     End If  'If IsYlwjcct("学生端") Then
+     
+     jishi0 = Nz(DLookup("计时", "sm测验记录_随课_今日当前", "方式='" & Emp1 & "'"))
+     'On Error Resume Next
+     jishi = 0
+     Me.计时.Value = jishi
+     If rid = 1 Then Me.已暂停.Value = Format(jishi0, "n:ss") & "+" & Format(jishi, "n:ss")
+     fz0 = 0
+     zttime = 0
+     kssj = Now()
+     
+     If rid > 1 Then
+        'LightboxForm.Show ' 显示半透明遮罩。
+        'SetWindowPos hwnd, -1, 0, 0, 0, 0, &H1 Or &H2  '窗体置顶。
+        'Me.最小化.Visible = False
+        Me.最小化.Visible = True
+     Else  'If rid = 1 Then
+        'LightboxForm.Show ' 显示半透明遮罩。偶有自动置顶碍事，暂禁用。
+        'SetWindowPos hwnd, -1, 0, 0, 0, 0, &H1 Or &H2  '窗体置顶。
+        Me.最小化.Visible = True
+        
+        'Me.答1.Visible = True
+        'Me.答2.Visible = True
+        'Me.答3.Visible = True
+     End If
+     
+     'ceyanID = Nz(DLookup("测验ID", "sm测验记录_当前最末"))
+     'MessageBoxTimeout Me.hwnd, Chr(10) & 1, "学科训练室", vbInformation, 0, 3000
+     
+     'If IsNull([文句3]) = False Then Me.答3.Visible = False  '包括全部
+     'If IsNull([文句3]) = False Then Me.答3.Locked = True    '锁不住
+     'Call SetTopMargin(Me.显示)  '文本按行下移纵向居中。
+     
+     'If IsYlwjcct("学生端") Then
+     '   Forms!学生端.SetFocus
+     '   Sleep (100)
+     'End If
+     
+     'Me.SetFocus
+     'Me.暂停.SetFocus '会造成悬浮按钮自动弹出。
+     Me.Tab.SetFocus
+     
+     If IsYlwjcct("学生端") Then ' 0 And '加载后不能自动获得焦点，导致录时表录为sm页面。
+        Me.Refresh '
+        Me.Requery '根据组序变化显示题。
+        
+        If ocl Then DoCmd.RunSQL yxtxt & Nz(Forms!学生端.端名) & "','sm测验随课','Form_Load sm测验随课.SetFocus','" & Now() & "')"
+        Forms!sm测验随课.SetFocus '必须。
+        'Sleep (200)
+     '   SetWindowPos hwnd, -1, 0, 0, 0, 0, &H1 Or &H2  '窗体置顶。
+        'SetWindowPos hwnd, -2, 0, 0, 0, 0, &H1 Or &H2  '取消置顶。'顶层之下？
+        'SetWindowPos hwnd, 1, 0, 0, 0, 0, &H1 Or &H2  '到最底部
+        
+        'MessageBoxTimeout Me.hwnd, Chr(10) & 3, "学科训练室", vbInformation, 0, 3000
+        
+        'Forms!学生端.fText.Value = "……"
+        'Sleep (200)
+        
+        'If IsYlwjcct("FrmLightbox") Then Forms!FrmLightbox.SetFocus ' 0 And '加载后不能自动获得焦点，导致录时表录为sm页面。
+        'Sleep (200)
+        'Forms!sm测验随课.SetFocus '加载后不能自动获得焦点，导致录时表录为sm页面。
+        'Me.SetFocus '加载后不能自动获得焦点，导致录时表录为sm页面。
+        
+        'If rid = 1 Then '加载后不能自动获得焦点，导致录时表录为sm页面。
+           'MessageBoxTimeout Me.hwnd, "待获取焦点…", "学科训练室", vbInformation, 0, 3000
+           'On Error Resume Next
+           'AppActivate "Microsoft Access", True   '激活程序。尝试解决测验时按键仍控制sm的问题。！！！此处无提示无征兆的造成学生端代码运行中断，找了三天才找到这里！！！
+           'Forms!sm测验随课.SetFocus  '通过跳转激活，尝试解决本窗体打开后不能自动进入暂停模式的问题。
+        'End If
+        
+        'DoEvents
+        'ShellEx ("Z:\Program\SuperMemo UX\SuperMemo_Min.vbs")  'sm最小化，以停止sm播放音频。迟滞。
+        
+        If ocl Then DoCmd.RunSQL yxtxt & Nz(Forms!学生端.端名) & "','sm测验随课','Form_Load 结束','" & Now() & "')"
+     End If
+     
+End Sub
+
+Private Sub Form_Open(Cancel As Integer)
+     SetWindowLong Me.hwnd, GWL_STYLE, GetWindowLong(Me.hwnd, GWL_STYLE) And Not (WS_MAXIMIZEBOX Or WS_MINIMIZEBOX) '使用代码隐藏窗体的 OnOpen 事件过程中最小化和最大化按钮，以避免出现#NAME?。
+     
+     tsls = 0 '1 ' '调试临时，默认0以减轻复杂度。
+     
+     'On Error Resume Next
+     DoCmd.SetWarnings False
+     DoCmd.RunSQL "update 学生端 set 测验窗='sm测验随课'"
+     
+     'Dim yxtxt As String, ocl As Boolean 'into_运行记录表 ----------------------
+     yxtxt = "insert into 运行记录表(端名,标记,注释,时间) values('"
+     If IsYlwjcct("学生端") Then
+        If Nz(Forms!学生端.运行模式) Like "*cl*" Then ocl = True Else ocl = False
+        If ocl Then DoCmd.RunSQL yxtxt & Nz(Forms!学生端.端名) & "','sm测验随课','Form_Open 打开','" & Now() & "')"
+        
+        Dim tsjwz As String
+        tsjwz = Nz(DLookup("项", "注册表", "名称='运行模式'"))
+        If Nz(Forms!学生端.computer_Name) Like "*" & tsjwz & "*" Or tsjwz Like "*" & Nz(Forms!学生端.computer_Name) & "*" Then tsjw = True '是调试机位。
+     Else
+        tsjw = True '是调试机位。
+     End If
+     
+     'LightboxForm.Show ' 显示半透明遮罩。偶有置顶遮挡sm测验随课窗体。
+     
+     Dim X As Long, Y As Long, w As Long, h As Long '-----窗体居中----------
+     Dim lRet As Long, apiRECT As RECT2     '窗体居中。
+     lRet = SystemParametersInfo(SPI_GETWORKAREA, vbNull, apiRECT, 0)
+     X = apiRECT.right * 15
+     Y = apiRECT.bottom * 15
+     w = 14000 + 100 '+ 100 为显示边框时所用。
+     h = 11992 '12000 避免首行自动隐藏上拉滚动条也出不来。
+     If w > X Then w = X
+     If h > Y Then h = Y '自动缩小，避免1024×768分辨率下窗体显示不全。
+     
+     Forms!sm测验随课.SetFocus
+     DoCmd.MoveSize (X - w) / 2, (Y - h) / 2, w, h    '---------------------
+     
+     DoCmd.RunCommand acCmdAppMinimize '首先最小化主窗口
+     
+     Emp0 = Nz(Forms!sm测验随课.OpenArgs) '获取传递的参数。Emp0适用于"sm测验记录题页"，Emp1适用于"sm测验记录"。
+     If Len(Emp0) Then
+        Emp1 = Emp0
+     Else
+        Emp1 = "随课测验"
+     End If
+     Me.方式.Value = Emp1 '供外部引用，如：sm测验记录题页_今日当前_已答_总分_写入 DoCmd.OpenForm "sm测验随课"
+     
+     If Emp1 = "背默拆词" Then
+        'Me.Title.Value = "背默预检：单词拼写"
+        Me.Title.Value = "背默拆词"
+     ElseIf Emp1 = "背默拆句" Then
+        'Me.Title.Value = "背默预检：句子填空"
+        Me.Title.Value = "背默拆词"
+     ElseIf Emp1 = "背默文序" Then
+        'Me.Title.Value = "背默预检：句子排序"
+        Me.Title.Value = "背默拆词"
+     'ElseIf DCount("组序", "sm测验记录题页_今日当前_待答_题卷") = 0 Then
+     '   Me.Title.Value = "复习测验"
+     Else
+        'Me.Title.Value = "随课测验"
+        Me.Title.Value = Emp1
+     End If
+     
+     On Error GoTo Err_zuxu
+     'zuxu = Nz(DLookup("最小组序", "sm测验记录题页_今日当前_待答_题_最小组序")) '优先开始的组。
+     zuxu = Nz(DLookup("max组序", "sm测验记录题页_今日当前_max组序")) '开始的最大组。
+     If ocl Then DoCmd.RunSQL yxtxt & Nz(Forms!学生端.端名) & "','sm测验随课','Form_Open zuxu=" & zuxu & "','" & Now() & "')"
+     
+     If 0 Then
+Err_zuxu:
+        DoCmd.RunSQL yxtxt & Nz(Forms!学生端.端名) & "','sm测验随课','Err_zuxu','" & Now() & "')"
+     End If
+     
+     If IsYlwjcct("学生端") Then
+        'Forms!学生端.测练.Visible = False
+        
+        If ocl Then DoCmd.RunSQL yxtxt & Nz(Forms!学生端.端名) & "','sm测验随课','Form_Open 首先停止自动播放音频','" & Now() & "')"
+        
+        Tlong1 = GetWindowTextLength(GetForegroundWindow) + 1
+        s = String(Tlong1, Chr(0))
+        GetWindowText GetForegroundWindow, s, Tlong1
+        If s Like "SuperMemo UX *" Then  '激活状态。
+           'Do Until s Like "SuperMemo UX *"  '比对窗口标题。
+           '   DoEvents
+           '   Tlong1 = GetWindowTextLength(GetForegroundWindow) + 1
+           '   s = String(Tlong1, Chr(0))
+           '   GetWindowText GetForegroundWindow, s, Tlong1
+           '   Sleep (200)
+           'Loop
+           
+           Call keybd_event(27, 0, 0, 0) 'Esc 停止播放音频。
+           Call keybd_event(27, 0, 2, 0)
+           Sleep (200)
+           Call keybd_event(27, 0, 0, 0) 'Esc 停止播放音频。
+           Call keybd_event(27, 0, 2, 0)
+           'Sleep (200)
+           'Call keybd_event(27, 0, 0, 0) 'Esc 停止播放音频。
+           'Call keybd_event(27, 0, 2, 0)
+           'Sleep (200)
+           
+           ShellEx ("Z:\Program\SuperMemo UX\SuperMemo_Min.vbs")  'sm最小化，以停止sm播放音频，并使Access获得焦点从而录时表计时准确。
+        End If
+     End If
+     
+
+End Sub
+
+Private Sub Form_Timer()
+     If Nz(Me.暂停) Then Exit Sub
+     If IsYlwjcct("学生端") = False Then Exit Sub
+     
+     ShellEx ("Z:\Program\SuperMemo UX\SuperMemo_Min.vbs")  'sm最小化，以防止本窗体打开在进行测验，被无意中置底而学生仍进行sm，造成二者重复计时，并使Access获得焦点从而录时表计时准确。
+     'DoCmd.RunCommand acCmdAppMinimize '最小化主窗口'最小化ACCESS窗体
+     'DoCmd.RunCommand acCmdAppMaximize '最大化主窗口'最大化ACCESS窗体
+     'DoCmd.RunCommand acCmdAppRestore   '还原主窗口'还原ACCESS窗体
+     'DoCmd.Maximize '最大化
+     If tsjw <> True Then '非调试机位。
+        DoCmd.Restore  '恢复
+        
+        If Forms!学生端.meEmnm = "金山词霸企业版2016" Or Forms!学生端.meEmnm = "有道词典" Or Forms!学生端.meEmnm = "YoudaoStrokeWnd" Then
+        Else
+           Forms!sm测验随课.SetFocus '若不能自动获得焦点，会导致录时表录为非"sm测验随课"页面。
+        End If
+     End If
+     
+     jssj = Now  '10秒钟一次，实时写入结束时间。
+     
+     DoCmd.SetWarnings False
+     'If IsYlwjcct("学生端") Then If ocl Then DoCmd.RunSQL yxtxt & Nz(Forms!学生端.端名) & "','sm测验随课','Form_Timer Me.计时_Value','" & Now() & "')"
+     
+     If IsNull(Me.正确率) And Me.交卷.Visible Then
+        jishi = CDate(jssj - kssj - zttime)
+        Me.计时.Value = jishi
+        'Me.计时.Requery  '.Refresh
+        
+        If IsYlwjcct("学生端") Then
+           '每一分钟保存结束时间
+           'If fz0 = 0 Then fz0 = kssj '仅首次借用一下。
+           If jssj - fz0 >= TimeValue("00:01:00") Then
+              DoCmd.RunSQL "update sm测验记录_随课_今日当前 set 结束时间=#" & jssj & "# , 计时=#" & jishi0 + jishi & "# where 方式='" & Emp1 & "'"
+              'DoCmd.RunSQL "update sm测验记录_随课_今日当前 set 结束时间='" & jssj & "' where 方式='" & Emp1 & "'"
+              
+              fz0 = jssj
+              'Me.速率.Value = Round(Nz(DCount("评分", "sm测验答题", "测验ID=" & ceyanID)) / (CDbl(jishi) * 1440), 1)
+           End If
+           
+           'If Nz(Me.快速时间) <> 0 And now5 - Nz(Me.快速时间) >= 4.5 / 86400 Then 'TimeSerial(0, 0, 10)
+        End If
+     End If
+     
+     If IsYlwjcct("学生端") Then
+        Forms!学生端.消息时间.Value = Now() '推迟学生端窗体10秒钟运算。
+        Forms!学生端.检测时间.Value = Now() '推迟学生端窗体一分钟运算xsd…，停止学生端后台运算，消除每分钟光标沙漏。
+        'If IsYlwjcct("课堂记录") And Me.暂停 = False Then
+     End If
+     
+     If tsls Then
+     '-------------------------------------------------1分钟无操作-----------------------------------------------
+     m_LII.cbSize = Len(m_LII)
+     GetLastInputInfo m_LII
+     If (GetTickCount() - m_LII.dwTime) \ 60000 = 1 Then  '开机以来过去的时间减去之前最后一次键盘鼠标操作时间即为无操作的时间。
+        Me.暂停.Value = True
+        Me.暂停.SetFocus '必须，否则当焦点在Me.交卷则会不能隐藏而报错。
+        Me.Title.Visible = False
+        Me.交卷.Visible = False
+        'Me.Box1.BorderStyle = 0
+        Me.Box1.BackStyle = 1  '处于前面遮挡其他控件。
+        Me.已暂停.Value = "超时已暂停，点击激活"
+        ztks = Now
+        
+        Me.SetFocus
+        Me.暂停.SetFocus
+     End If  '-----------------------------------------1分钟无操作-----------------------------------------------
+     End If
+     
+End Sub
+
+Private Sub Form_Unload(Cancel As Integer)
+     If IsYlwjcct("学生端") Then If ocl Then DoCmd.RunSQL yxtxt & Nz(Forms!学生端.端名) & "','sm测验随课','Form_Unload 开始…','" & Now() & "')"
+     
+     Call Close_0
+     
+     If lb = 0 Then 'OpenForm "重启窗体" 则不必sm最大化
+        ShellEx ("Z:\Program\SuperMemo UX\SuperMemo_Max.vbs")  'sm最大化，以恢复sm并播放音频。慢。
+        'DoEvents
+        'Sleep (300)
+        On Error Resume Next '必要
+        AppActivate "SuperMemo", True   '激活已运行的程序。
+     End If
+     
+     DoCmd.SetWarnings False
+     DoCmd.RunSQL "update 学生端 set 测验随课= 0"  '宣示运行结束，准备重新创建。
+     
+     If IsYlwjcct("学生端") Then
+        'DoCmd.RunSQL "update sm测验记录_随课_今日当前 set 结束时间='" & Now & "'" ', 计时='" & jishi0 + jishi & "'"
+        DoCmd.RunSQL "update sm测验记录_随课_今日当前 set 结束时间='" & Now & "' where 方式='" & Emp1 & "'" '交卷后闲看时间不计入[计时]。
+        
+        Forms!学生端.sm页面延时.Value = 1
+        'DoCmd.RunSQL "update 注册表l set 值='" & Now & "',参数 = '" & Nz(Forms!学生端.用户名) & "." & Nz(Forms!学生端.科目号) & "' where 名称='随课测验结束时间'"
+        
+        Dim clan As String
+        clan = Nz(DLookup("测练按钮", "学生端"))
+        If Len(clan) Then
+           Forms!学生端.测练.Caption = clan
+           Forms!学生端.测练.Visible = True
+           'qqiu = False
+        'Else
+        '   Forms!学生端.测练.Caption = "测练"
+        '   Forms!学生端.测练.Visible = False
+        End If
+     End If
+     
+     If IsYlwjcct("FrmLightbox") Then LightboxForm.Hide ' 隐藏半透明背景
+     DoCmd.Close acForm, "悬浮按钮"
+     
+     'Exit Sub  '下面会导致sm自动按键，暂跳过，待改进。
+        
+     '自动激活已经打开的SuperMemo-----------------------------------------------------------实践中无故无效。
+     'Dim objWMIService, colProcesses  '检测程序是否已经在运行。
+     'Set objWMIService = GetObject("WinMgmts:")
+     'Set colProcesses = objWMIService.ExecQuery("Select * From Win32_Process where name = 'SuperMemo.exe' ")
+     'Dim CcP As Integer
+     'CcP = CInt(colProcesses.Count)
+     'If CcP Then  '在运行。
+     '   On Error Resume Next 'On Error GoTo next'错误则跳过，解决sm尚在启动过程中不能激活而报错。
+     '   AppActivate "SuperMemo", True   '激活已运行的程序。
+     '   'Sleep (200)
+     '   SendKeys "% ~"   'Alt+Enter 还原全屏窗口
+     '   'SendKeys "% X"   'Alt+X 最大化窗口
+     'End If '激活已经打开的SuperMemo-----------------------------------------------------
+     
+     If IsYlwjcct("学生端") Then If ocl Then DoCmd.RunSQL yxtxt & Nz(Forms!学生端.端名) & "','sm测验随课','Form_Unload 结束。','" & Now() & "')"
+     
+     DoCmd.RunSQL "update 学生端 set 测验窗=''"
+     
+End Sub
+
+Private Sub Title_DblClick(Cancel As Integer)
+     Me.Refresh
+     Me.Requery '
+     
+     'zuxu = Nz(DLookup("最小组序", "sm测验记录题页_今日当前_待答_题_最小组序")) '优先开始的组。
+     'zuxu = Nz(DLookup("max组序", "sm测验记录题页_今日当前_max组序")) '开始的最大组。
+     'MessageBoxTimeout Me.Hwnd, zuxu, "学科训练室", vbInformation, 0, 1000
+     tishu = Nz(DCount("*", "sm测验记录题页_今日当前_待答_题卷", "Nz(组序)<=" & zuxu))
+     'MessageBoxTimeout Me.Hwnd, tishu, "学科训练室", vbInformation, 0, 1000
+     Me.交卷.Caption = tishu & " " & "提交" 'Chr(13) & Chr(10) & "( 待答:" & tishu & " )"
+     Me.题数.Value = tishu
+     
+End Sub
+
+Private Sub 播放_Click()
+     'Me.Tab0.SetFocus
+     
+     Me.播放暂停.Visible = True '显示。可避免下面报错。
+     Me.播放暂停.Value = False  '弹起。
+     Me.播放暂停.SetFocus
+     
+     'If Me.播放.Caption = "播放" Then
+     '   Me.播放.Caption = "停止"
+        MMPlay (playlj) '==============
+     'Else
+     '   MMStop (playlj)  '停止播放
+     '   Me.播放.Caption = "播放"
+     'End If
+     
+End Sub
+
+Private Sub 播放暂停_Click()
+     If Me.播放暂停 Then
+        mciSendString "pause " & playlj, vbNullString, 0, 0
+     Else
+        mciSendString "resume " & playlj, vbNullString, 0, 0
+     End If
+     
+End Sub
+
+Private Sub 查看_Click()
+     If [区别] = "全文" Then
+        DoCmd.OpenForm "文本窗"
+        Forms!文本窗.文本.Value = Nz(DLookup("文段", "sm测验记录题页_今日当前_文段", "题页ID=" & [题页ID])) 'Me.题文s
+     End If
+     
+End Sub
+
+Private Sub 交卷_Click() 'jjkj
+     'Me.SetFocus
+     Me.Tab.SetFocus  '必须跳出以写入作答,避免最后一条记录因未跳出而未更新。
+     'Me.Refresh
+     
+     If dj = 1 Then '击键触发，消除伴随单击1。
+        dj = 0
+        Exit Sub
+     End If
+     
+     If left(Me.交卷.Caption, 1) = "0" Then
+        If ocl Then DoCmd.RunSQL yxtxt & Nz(Forms!学生端.端名) & "','sm测验随课','交卷_Click Me.Requery','" & Now() & "')"
+        Me.Refresh
+        Me.Requery '
+        
+        'zuxu = Nz(DLookup("最小组序", "sm测验记录题页_今日当前_待答_题_最小组序")) '优先开始的组。
+        'zuxu = Nz(DLookup("max组序", "sm测验记录题页_今日当前_max组序")) '开始的最大组。
+        'MessageBoxTimeout Me.Hwnd, zuxu, "学科训练室", vbInformation, 0, 1000
+        On Error Resume Next '偶有错卡。
+        tishu = Nz(DCount("*", "sm测验记录题页_今日当前_待答_题卷", "Nz(组序)<=" & zuxu))
+        'MessageBoxTimeout Me.Hwnd, tishu, "学科训练室", vbInformation, 0, 1000
+        Me.交卷.Caption = tishu & " " & "提交" 'Chr(13) & Chr(10) & "( 待答:" & tishu & " )"
+        Me.题数.Value = tishu
+              
+        If 0 Then
+Err_tishu:
+           DoCmd.RunSQL yxtxt & Nz(Forms!学生端.端名) & "','sm测验随课 交卷_Click','Err_tishu','" & Now() & "')"
+        End If
+     End If
+     
+     DoCmd.SetWarnings False
+     'DoCmd.OpenQuery "sm测验记录题页_今日当前_计分_写入"
+     On Error Resume Next '偶有错卡。
+     DoCmd.OpenQuery "sm测验记录题页_今日当前_得分_写入"   '写入sm测验记录题页表：得分。
+     DoCmd.OpenQuery "sm测验记录题页_今日当前_已答_总分_写入"  '写入sm测验记录表：题数,作答,答对，唯此才能准确，RunSQL update增量递加难以准确。
+     If ocl Then DoCmd.RunSQL yxtxt & Nz(Forms!学生端.端名) & "','sm测验随课','交卷_Click 得分_写入','" & Now() & "')"
+     
+     '偶有jishi0 + Nz(Me.计时)异常大，待观察。
+     If rid = 1 Then Me.已暂停.Value = Format(jishi0, "n:ss") & "+" & Format(jishi, "n:ss")
+     DoCmd.RunSQL "update sm测验记录_随课_今日当前 set 结束时间='" & Now & "', 计时='" & jishi0 + jishi & "' where 方式='" & Emp1 & "'"
+     
+     'MessageBoxTimeout Me.hwnd, tishu, "学科训练室", vbInformation, 0, 1000
+     
+     'tishu = Nz(DCount("*", "sm测验记录题页_今日当前_待答_题卷", "nz(类别) like '*" & Emp1 & "*'"))
+     'If tishu Then
+     'End If
+     
+     If 0 Then
+        tishu = Nz(DCount("*", "sm测验记录题页_今日当前_待答_题卷", "IsNull(得分) and nz(类别) like '*" & Emp1 & "*'")) '未答的，条件必要。
+        If tishu = 0 Then '都答了。
+           'Me.Refresh '显示评价。
+           Me.评价.BorderStyle = 1 '显示，以便点击后以红色序号提示正确答案方便学生纠错。
+        Else '有未答的。
+           Me.评价.BorderStyle = 0
+        End If
+        'Me.速率.Visible = True
+     End If
+     
+     On Error Resume Next '避免偶尔报错。
+     Me.Refresh '显示评价。
+     
+     If Nz(Me.评价) Like "*√*" And [区别] = "全文" Then
+        Me.查看.Enabled = True
+     Else
+        Me.查看.Enabled = False
+     End If
+     
+     If Nz(Me.评价) Like "*√*" And Len([问音]) And Me.暂停 = False Then
+        Me.播放.Enabled = True
+        Me.播放暂停.Enabled = True
+     Else
+        Me.播放.Enabled = False
+        Me.播放暂停.Enabled = False
+     End If
+     
+     If Me.Title Like "背默*" Then
+        DoCmd.ApplyFilter , True '根据组序变化显示题。必要。
+        tishu = Nz(DCount("*", "sm测验记录题页_今日当前_待答_题卷"))
+     ElseIf cpms Like "-*" Then
+        Me.Requery '根据组序变化显示题。必要。
+        tishu = Nz(DCount("*", "sm测验记录题页_今日当前_待答_题卷"))
+     Else
+        'zuxu = Nz(DLookup("最小组序", "sm测验记录题页_今日当前_待答_题_最小组序")) '在此查询会造成题数一减一加不变不刷新页面而看不到新题。
+        'tishu = Nz(DCount("*", "sm测验记录题页_今日当前_待答_题卷", "Nz(组序)<=" & zuxu)) 'Nz(组序)必要。
+        tishu = Nz(DCount("*", "sm测验记录题页_今日当前_待答_题卷", "IsNull(组序) or Nz(组序)<=" & zuxu)) 'Nz(组序)必要。
+        If ocl Then DoCmd.RunSQL yxtxt & Nz(Forms!学生端.端名) & "','sm测验随课','交卷_Click tishu=" & tishu & " zuxu=" & zuxu & "','" & Now() & "')"
+        
+        If Me.评价.BorderStyle Then
+           'Me.查看.Visible = True
+           Me.播放.Visible = True
+           Me.播放暂停.Visible = True
+        End If
+     End If
+     
+     If tishu0 = tishu And tishu0cishu >= 1 Then '组序条件太复杂导致tishu偶误，待深入优化。暂设定连续单击二次"提交"则刷新题页面。
+        tishu0 = tishu
+        tishu0cishu = 0
+        Me.Requery '根据组序变化显示题。必要。
+        DoCmd.RunSQL yxtxt & Nz(Forms!学生端.端名) & "','sm测验随课','交卷_Click tishu有误，单击二次刷新题页面。','" & Now() & "')" ' If ocl Then
+     ElseIf tishu0 = tishu Then
+        tishu0cishu = tishu0cishu + 1
+        DoCmd.RunSQL yxtxt & Nz(Forms!学生端.端名) & "','sm测验随课','交卷_Click tishu有误。','" & Now() & "')" ' If ocl Then
+     Else 'If tishu0 <> tishu Then
+        tishu0 = tishu
+        tishu0cishu = 0
+     End If
+     
+     'tishu = Nz(DCount("*", "sm测验记录题页_今日当前_待答_题卷", "IsNull(已写入)=False and (IsNull(作答) Or 有错) and nz(类别) like '*" & Emp1 & "*'")) '未答的、待纠错的。
+     'tishu = Nz(DCount("*", "sm测验记录题页_今日当前_待答_题卷", "(IsNull(得分) Or IsNull(已写入)=False and (IsNull(作答) Or 有错)) and nz(类别) like '*" & Emp1 & "*'")) '未答的、待纠错的。
+     Me.交卷.Caption = tishu & " " & "提交" 'Chr(13) & Chr(10) & "( 待答:" & tishu & " )"
+     DoCmd.RunSQL "update 学生端 set 测练按钮='" & IIf(tishudd, "测验 " & tishu, Null) & "'"
+     Me.题数.Value = tishu
+     
+     If tishu = 0 Then '都答了。
+        'Me.Refresh '显示评价。
+        Me.评价.BorderStyle = 1 '显示，以便点击后以红色序号提示正确答案方便学生纠错。
+     Else '有未答的。
+        Me.评价.BorderStyle = 0
+     End If
+     
+     If 0 And jishi Then
+        Me.速率.Value = (daidaY - tishu) / (jishi * 1440) '有了强制过关追加题，待改进。
+        Me.速率.Visible = True
+     End If
+     
+     'If tishu Then
+        'Me.正答1s.Visible = True
+        'Me.正答2s.Visible = True
+        'Me.正答3s.Visible = True
+        
+        'Me.评价.Visible = True
+        'Me.评价.Enabled = False 'True '
+        'Me.评价.Locked = 1 '0 '
+        'Me.评价.Requery
+     'Else
+        'Me.正答1s.Visible = False
+        'Me.正答2s.Visible = False
+        'Me.正答3s.Visible = False
+        'Me.评价.Visible = False
+     'End If
+     
+     If IsYlwjcct("学生端") Then
+        If ocl Then DoCmd.RunSQL yxtxt & Nz(Forms!学生端.端名) & "','sm测验随课','交卷_Click 学生端.fuText1','" & Now() & "')"
+        
+        If Forms!学生端.fBox0.Visible Then
+           Dim zuoda As Long, dadui As Long, zql As Double
+           'cishu = Nz(DLookup("次数", "sm测验记录_随课_今日当前", "方式='" & Emp1 & "'")) '随课测验
+           'zuoda = Nz(DLookup("作答", "sm测验记录_随课_今日当前", "方式='" & Emp1 & "'"))
+           'dadui = Nz(DLookup("答对", "sm测验记录_随课_今日当前", "方式='" & Emp1 & "'"))
+           'zql = Nz(DLookup("正确率", "sm测验记录_随课_今日当前", "方式='" & Emp1 & "'"))
+           'zuoda = Nz(DLookup("作答", "sm测验记录_随课_今日当前_合计"))
+           zuoda = Nz(DLookup("作答", "sm测验记录_当前今日_合计"))
+           cishu = Nz(DLookup("次数", "sm测验记录_当前今日_合计"))
+           dadui = Round(Nz(DLookup("答对数", "sm测验记录_当前今日_合计")))
+           zql = Nz(DLookup("加权正确率", "sm测验记录_当前今日_合计"))
+           
+           Forms!学生端.fText1.Value = Nz(Forms!学生端.姓名) & "　测验" & zuoda & "/" & cishu & IIf(zql > 0.8, "　　　 ", "　差错" & zuoda - dadui) _
+              & "　达标度" & Switch(zql > 0.91, ":慢了", zql >= 0.8, ":好", True, Format(IIf(zql, zql - 0.005, 0), "0%"))
+           
+           Forms!学生端.fuText1.Value = Forms!学生端.fText1  '定义的fuText1报错不可用，待解决。
+           
+           If zql < 0.7 Then
+              If zuoda >= 5 Then Forms!学生端.fText1.ForeColor = vbRed '红色
+           ElseIf zql < 0.8 Then
+              If zuoda >= 5 Then Forms!学生端.fText1.ForeColor = RGB(255, 255, 0) '黄色
+           Else
+              Forms!学生端.fText1.ForeColor = RGB(51, 51, 51)  '原色
+           End If
+        End If
+     End If
+     
+     'tishu = Nz(DCount("*", "sm测验记录题页_今日当前_待答_题卷"))
+     'If tishu Then Exit Sub
+     'Me.题文.Enabled = True  '可用，便于划词翻译。
+     'Me.选项1.Enabled = True
+     'Me.选项2.Enabled = True
+     'Me.选项3.Enabled = True
+     
+     If tishu = 0 Then
+        Me.交卷.Visible = False
+        
+        Me.Close.Visible = True
+        Me.Close.SetFocus
+        'Me.速率.Visible = True
+        
+        If Nz(Forms!学生端.测评模式) = "课首开始" Then Forms!学生端.测评模式.Value = "课首已过" '??
+        
+        'Me.选答1.Locked = 1 '0 '无效
+        'Me.选答2.Locked = 1
+        'Me.选答3.Locked = 1
+        
+        'Exit Sub  '屏蔽重复点击。
+        
+        If ocl Then DoCmd.RunSQL yxtxt & Nz(Forms!学生端.端名) & "','sm测验随课','交卷_Click Call Close_Click','" & Now() & "')"
+        'DoCmd.Close acForm, "sm测验随课"
+        Call Close_Click
+     Else
+        DoCmd.GoToControl "[评价]" '焦点移到定位需要的字段。
+        DoCmd.FindRecord "*×*"    '自动定位到错题。
+     End If
+     
+     'If Me.交卷.Caption = "全部完成" Then
+     '   'Me.交卷.Visible = False
+     '   Me.Close.Visible = True
+     '   'Me.交卷.Caption = "关闭"
+     '   Me.评价.BorderStyle = 1
+     '
+     '   daida = Nz(DCount("*", "sm测验记录题页_今日当前_待答_题卷", "IsNull(作答) Or 有错"))
+     '   Me.题数.Value = daida
+     '   If jishi Then Me.速率.Value = (daidaY - daida) / (jishi * 1440)
+     ''ElseIf Me.交卷.Caption = "关闭" Then
+     ''   Call Close_Click
+     ''   Exit Sub
+     'End If
+     
+End Sub
+
+Private Sub 交卷_KeyPress(KeyAscii As Integer)
+     dj = 1 '消除伴随的一次单击。
+     
+     Me.Close.Visible = True
+     
+End Sub
+
+Private Sub 快捷键1_Click()
+     Call 交卷_Click
+     
+End Sub
+
+Private Sub 评价_Click()
+     Me.Tab.SetFocus 'If Me.交卷.Visible Then Me.交卷.SetFocus
+     If Me.评价.BorderStyle = 1 Then
+        Me.正答1s.Visible = True
+        Me.正答2s.Visible = True
+        Me.正答3s.Visible = True
+     End If
+     
+End Sub
+
+Private Sub 题文s_Click()
+     Exit Sub '停用。
+     
+     If Len([问音]) And Me.暂停 = False Then
+        'Me.查看.Visible = True
+        Me.播放.Visible = True
+        'Me.播放.Caption = "播放"
+        'If [音位] = "自问" Then
+        Call 播放_Click '自动播放。
+        
+        Me.播放暂停.Visible = True '隐藏。
+        Me.播放暂停.Value = False  '弹起。
+     Else
+        'Me.查看.Visible = False '隐藏。
+        Me.播放.Visible = False '隐藏。
+        'If Me.播放.Caption = "停止" Then Call 播放_Click
+        
+        Me.播放暂停.Visible = False
+     End If
+     
+End Sub
+
+Private Sub 题文s_Enter()
+     If Not Nz(Me.评价) Like "*√*" Then Me.Tab.SetFocus 'If Me.交卷.Visible Then Me.交卷.SetFocus  '答案正确前自动跳出，答案正确后才可划选翻译答案。
+     
+End Sub
+
+Private Sub 题文s_KeyPress(KeyAscii As Integer) '不可用，会有自动击键动作而自动启动。
+     'Call 查看_Click
+
+End Sub
+
+Private Sub 选答1_AfterUpdate()
+     
+     'If Me.选答1 = 2 Or Me.选答1 = 3 Then  '直接键入选项1的目标序号。
+     '   Eval ("Forms!sm测验随课.[答" & Switch(Nz(Me.答1) = 1, 1, Nz(Me.答2) = 1, 2, Nz(Me.答3) = 1, 3, True, 1) & "].Value = " & Me.选答1)  '无效
+     
+     If Me.答1 = Me.选答1 Then Me.答1.Value = Null  '清理其它位之前的同一答号，准备重新定位写入。
+     If Me.答2 = Me.选答1 Then Me.答2.Value = Null
+     If Me.答3 = Me.选答1 Then Me.答3.Value = Null
+     ''If Me.选答1 = Me.选答1 Then Me.选答1.Value = Null
+     'If Me.选答2 = Me.选答1 Then Me.选答2.Value = Null
+     'If Me.选答3 = Me.选答1 Then Me.选答3.Value = Null
+     
+     If Me.选项1 = [文句1] Then  '找到真正的答位并写入答号。
+        Me.答1.Value = Me.选答1
+     ElseIf Me.选项1 = [文句2] Then
+        Me.答2.Value = Me.选答1
+     ElseIf Me.选项1 = [文句3] Then
+        Me.答3.Value = Me.选答1
+     End If
+     
+     If Me.选答1 = 1 Then  '保持无关位空白，找到需要的对应位写入位号，清除本位临时位号。
+        Me.选答1.Value = Null
+        Me.选答1.Value = 1
+     ElseIf Me.选答1 = 2 Then
+        Me.选答1.Value = Null
+        Me.选答2.Value = 2
+     ElseIf Me.选答1 = 3 Then
+        Me.选答1.Value = Null
+        Me.选答3.Value = 3
+     Else  '其它
+        Me.选答1 = Null
+        Me.答1.Value = Null
+        If IsNull(Me.答1) Then Me.选答1.Value = Null
+        If IsNull(Me.答2) Then Me.选答2.Value = Null
+        If IsNull(Me.答3) Then Me.选答3.Value = Null
+     End If
+     
+     '前为非则显示本位选项。 前面是根据非本位答号获取与“本位号相同答号的选项”， _
+     后面是点击向上换位后仅有一个本位答号的情况下，获取“本答号相同位号的选项”，相当于选项换位。
+1       Me.选项1.Value = Switch(Nz(Me.答1) = 1, [文句1], Nz(Me.答2) = 1, [文句2], Nz(Me.答3) = 1, [文句3], _
+                             Nz(Me.答1) = 1, [文句1], Nz(Me.答1) = 2, [文句2], Nz(Me.答1) = 3, [文句3], True, [文句1])
+     Me.选项2.Value = Switch(Nz(Me.答1) = 2, [文句1], Nz(Me.答2) = 2, [文句2], Nz(Me.答3) = 2, [文句3], _
+                             Nz(Me.答2) = 1, [文句1], Nz(Me.答2) = 2, [文句2], Nz(Me.答2) = 3, [文句3], True, [文句2])
+     Me.选项3.Value = Switch(Nz(Me.答1) = 3, [文句1], Nz(Me.答2) = 3, [文句2], Nz(Me.答3) = 3, [文句3], _
+                             Nz(Me.答3) = 1, [文句1], Nz(Me.答3) = 2, [文句2], Nz(Me.答3) = 3, [文句3], True, [文句3])
+     
+     'If IsNull([文句1]) Or (Nz(Me.答1) <> 1 And Nz(Me.答2) <> 2 And Nz(Me.答3) <> 3) Then
+     '   Me.答1.Value = Null
+     '   Me.选答1.Value = Null
+     '   Me.选项1.Value = Null
+     'End If
+     
+     Me.Tab.SetFocus
+     Me.选答1.SetFocus
+
+End Sub
+
+Private Sub 选答1_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
+     Call HyperlinkMouseMove([选答1])
+     
+End Sub
+
+Private Sub 选答2_AfterUpdate()
+     If Me.答1 = Me.选答2 Then Me.答1.Value = Null  '清理其它位之前的同一答号，准备重新定位写入。
+     If Me.答2 = Me.选答2 Then Me.答2.Value = Null
+     If Me.答3 = Me.选答2 Then Me.答3.Value = Null
+     
+     If Me.选项2 = [文句1] Then  '找到真正的答位并写入答号。
+        Me.答1.Value = Me.选答2
+     ElseIf Me.选项2 = [文句2] Then
+        Me.答2.Value = Me.选答2
+     ElseIf Me.选项2 = [文句3] Then
+        Me.答3.Value = Me.选答2
+     End If
+     
+     If Me.选答2 = 1 Then  '保持无关位空白，找到需要的对应位写入位号，清除本位临时位号。
+        Me.选答2.Value = Null
+        Me.选答1.Value = 1
+     ElseIf Me.选答2 = 2 Then
+        Me.选答2.Value = Null
+        Me.选答2.Value = 2
+     ElseIf Me.选答2 = 3 Then
+        Me.选答2.Value = Null
+        Me.选答3.Value = 3
+     Else  '其它
+        Me.选答2 = Null
+        Me.答2.Value = Null
+        If IsNull(Me.答1) Then Me.选答1.Value = Null
+        If IsNull(Me.答2) Then Me.选答2.Value = Null
+        If IsNull(Me.答3) Then Me.选答3.Value = Null
+     End If
+     
+     '前为非则显示本位选项。 前面是根据非本位答号获取与“本位号相同答号的选项”， _
+     后面是点击向上换位后仅有一个本位答号的情况下，获取“本答号相同位号的选项”，相当于选项换位。
+1       Me.选项1.Value = Switch(Nz(Me.答1) = 1, [文句1], Nz(Me.答2) = 1, [文句2], Nz(Me.答3) = 1, [文句3], _
+                             Nz(Me.答1) = 1, [文句1], Nz(Me.答1) = 2, [文句2], Nz(Me.答1) = 3, [文句3], True, [文句1])
+     Me.选项2.Value = Switch(Nz(Me.答1) = 2, [文句1], Nz(Me.答2) = 2, [文句2], Nz(Me.答3) = 2, [文句3], _
+                             Nz(Me.答2) = 1, [文句1], Nz(Me.答2) = 2, [文句2], Nz(Me.答2) = 3, [文句3], True, [文句2])
+     Me.选项3.Value = Switch(Nz(Me.答1) = 3, [文句1], Nz(Me.答2) = 3, [文句2], Nz(Me.答3) = 3, [文句3], _
+                             Nz(Me.答3) = 1, [文句1], Nz(Me.答3) = 2, [文句2], Nz(Me.答3) = 3, [文句3], True, [文句3])
+     
+     'If IsNull([文句2]) Or (Nz(Me.答2) <> 1 And Nz(Me.答2) <> 2 And Nz(Me.答2) <> 3) Then
+     '   Me.答2.Value = Null
+     '   Me.选项2.Value = Null
+     'End If
+     
+     Me.Tab.SetFocus
+     Me.选答2.SetFocus
+
+End Sub
+
+Private Sub 选答2_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
+     Call HyperlinkMouseMove([选答2])
+     
+End Sub
+
+Private Sub 选答3_AfterUpdate()
+     If Me.答1 = Me.选答3 Then Me.答1.Value = Null  '清理其它位之前的同一答号，准备重新定位写入。
+     If Me.答2 = Me.选答3 Then Me.答2.Value = Null
+     If Me.答3 = Me.选答3 Then Me.答3.Value = Null
+     
+     If Me.选项3 = [文句1] Then  '找到真正的答位并写入答号。
+        Me.答1.Value = Me.选答3
+     ElseIf Me.选项3 = [文句2] Then
+        Me.答2.Value = Me.选答3
+     ElseIf Me.选项3 = [文句3] Then
+        Me.答3.Value = Me.选答3
+     End If
+     
+     If Me.选答3 = 1 Then  '保持无关位空白，找到需要的对应位写入位号，清除本位临时位号。
+        Me.选答3.Value = Null
+        Me.选答1.Value = 1
+     ElseIf Me.选答3 = 2 Then
+        Me.选答3.Value = Null
+        Me.选答2.Value = 2
+     ElseIf Me.选答3 = 3 Then
+        Me.选答3.Value = Null
+        Me.选答3.Value = 3
+     Else  '其它
+        Me.选答3 = Null
+        Me.答3.Value = Null
+        If IsNull(Me.答1) Then Me.选答1.Value = Null
+        If IsNull(Me.答2) Then Me.选答2.Value = Null
+        If IsNull(Me.答3) Then Me.选答3.Value = Null
+     End If
+     
+     '前为非则显示本位选项。 前面是根据非本位答号获取与“本位号相同答号的选项”， _
+     后面是点击向上换位后仅有一个本位答号的情况下，获取“本答号相同位号的选项”，相当于选项换位。
+1       Me.选项1.Value = Switch(Nz(Me.答1) = 1, [文句1], Nz(Me.答2) = 1, [文句2], Nz(Me.答3) = 1, [文句3], _
+                             Nz(Me.答1) = 1, [文句1], Nz(Me.答1) = 2, [文句2], Nz(Me.答1) = 3, [文句3], True, [文句1])
+     Me.选项2.Value = Switch(Nz(Me.答1) = 2, [文句1], Nz(Me.答2) = 2, [文句2], Nz(Me.答3) = 2, [文句3], _
+                             Nz(Me.答2) = 1, [文句1], Nz(Me.答2) = 2, [文句2], Nz(Me.答2) = 3, [文句3], True, [文句2])
+     Me.选项3.Value = Switch(Nz(Me.答1) = 3, [文句1], Nz(Me.答2) = 3, [文句2], Nz(Me.答3) = 3, [文句3], _
+                             Nz(Me.答3) = 1, [文句1], Nz(Me.答3) = 2, [文句2], Nz(Me.答3) = 3, [文句3], True, [文句3])
+     
+     'If IsNull([文句3]) Or (Nz(Me.答3) <> 1 And Nz(Me.答3) <> 2 And Nz(Me.答3) <> 3) Then
+     '   Me.答3.Value = Null
+     '   Me.选项3.Value = Null
+     'End If
+     
+     Me.Tab.SetFocus
+     Me.选答3.SetFocus
+
+End Sub
+
+Private Sub 选答1_Click()
+     On Error Resume Next  '偶有报错。
+     
+     If IsNull([文句1]) Then  '无选项内容则不可写。
+        Me.答1.Value = Null
+        Me.选答1.Value = Null
+        Me.选项1.Value = Null
+        Me.Tab.SetFocus 'If Me.交卷.Visible Then Me.交卷.SetFocus
+     ElseIf Nz(Me.评价) Like "*√*" And IsNull(Me.选答1) + IsNull(Me.选答2) = 0 Then
+        Me.Tab.SetFocus 'If Me.交卷.Visible Then Me.交卷.SetFocus        '作对后单击自动跳出，不可再通过单击更改，但是可通过键盘更改。
+     Else
+        Dim h As Integer, k As Integer
+        h = Nz(Me.答1) + Nz(Me.答2) + Nz(Me.答3)
+        'k = IsNull(Me.答1) + IsNull(Me.答2) + IsNull(Me.答3)
+        k = IsNull(Me.选答1) + IsNull(Me.选答2) + IsNull(Me.选答3)
+        
+        If k = -3 And IsNull([文句3]) And IsNull([文句1]) + IsNull([文句2]) = 0 Then '都为空，仅有两个选项，点击则都写入。
+           Me.选答1.Value = 1
+           Me.选答2.Value = 2
+           
+               If Me.选项1 = [文句1] Then
+              Me.答1.Value = 1
+           ElseIf Me.选项1 = [文句2] Then
+              Me.答2.Value = 1
+           End If
+           
+               If Me.选项2 = [文句1] Then
+              Me.答1.Value = 2
+           ElseIf Me.选项2 = [文句2] Then
+              Me.答2.Value = 2
+           End If
+           
+           Me.选项1.Value = Switch(Nz(Me.答1) = 1, [文句1], Nz(Me.答2) = 1, [文句2], True, Me.选项1)
+           Me.选项2.Value = Switch(Nz(Me.答1) = 2, [文句1], Nz(Me.答2) = 2, [文句2], True, Me.选项2)
+           
+        ElseIf k = -3 Then  '都为空，有三个选项。
+           On Error Resume Next  '偶有报错。?
+           Me.选答1.Value = 1
+               If Me.选项1 = [文句1] Then
+              Me.答1.Value = 1
+           ElseIf Me.选项1 = [文句2] Then
+              Me.答2.Value = 1
+           ElseIf Me.选项1 = [文句3] Then
+              Me.答3.Value = 1
+           End If
+           
+           'Me.选项1.Value = Me.选项1
+           If Nz(Me.答1) = 1 Then
+              Me.选项1.Value = [文句1]
+           ElseIf Nz(Me.答2) = 1 Then
+              Me.选项1.Value = [文句2]
+           ElseIf Nz(Me.答3) = 1 Then
+              Me.选项1.Value = [文句3]
+           End If
+           
+           'MessageBoxTimeout Me.hwnd, k, "学科训练室", 64, 0, 500
+           
+        '都不空、仅有两个选项且都不空、仅当前不空，点击则全清空。'skcyfk1
+        ElseIf k = 0 Or k = -1 And IsNull([文句3]) And IsNull([文句1]) + IsNull([文句2]) = 0 Or k = -2 And IsNull(Me.选答1) = False Then
+           
+           'MessageBoxTimeout Me.hwnd, k, "学科训练室", 64, 0, 500
+           
+           On Error Resume Next '临时应急。
+           Me.Refresh  '刷新全部
+           
+           Me.答1.Value = Null
+           Me.答2.Value = Null
+           Me.答3.Value = Null
+           Me.选答1.Value = Null
+           Me.选答2.Value = Null
+           Me.选答3.Value = Null
+        ElseIf IsNull(Me.选答1) Then  '空点击则递增写入序号。
+           Me.选答1.Value = 1
+               If Me.选项1 = [文句1] Then
+              Me.答1.Value = Switch(h = 0, 1, h = 1, 2, h = 2, 1, h = 3, IIf(k = -1, 3, 1), h = 4, 2, h = 5, 1, h = 6, Null)
+           ElseIf Me.选项1 = [文句2] Then
+              Me.答2.Value = Switch(h = 0, 1, h = 1, 2, h = 2, 1, h = 3, IIf(k = -1, 3, 1), h = 4, 2, h = 5, 1, h = 6, Null)
+           ElseIf Me.选项1 = [文句3] Then
+              Me.答3.Value = Switch(h = 0, 1, h = 1, 2, h = 2, 1, h = 3, IIf(k = -1, 3, 1), h = 4, 2, h = 5, 1, h = 6, Null)
+           End If
+        Else  '非空点击则清空。
+           Me.选答1.Value = Null
+               If Me.选项1 = [文句1] Then
+              Me.答1.Value = Null
+           ElseIf Me.选项1 = [文句2] Then
+              Me.答2.Value = Null
+           ElseIf Me.选项1 = [文句3] Then
+              Me.答3.Value = Null
+           End If
+                         
+           If IsNull(Me.选答2) Then Me.答2.Value = Null
+           If IsNull(Me.选答3) Then Me.答3.Value = Null
+        End If
+        
+        On Error Resume Next  '偶有报错。
+        Me.Refresh  '刷新全部
+        
+     End If
+     
+     'If Nz(Me.答1) = 1 Then  '暂用不上。
+     '
+     'End If
+     
+     'If Nz(Me.答1) = 2 Then  '暂用不上。
+     '   If IsNull(Me.答1) And IsNull([文句1]) = False Then Me.答1.Value = 3
+     '   If IsNull(Me.答2) And IsNull([文句2]) = False Then Me.答2.Value = 3
+     '   If IsNull(Me.答3) And IsNull([文句3]) = False Then Me.答3.Value = 3
+     'End If
+     
+     '前为非则显示本位选项。 前面是根据非本位答号获取与“本位号相同答号的选项”， _
+     后面是点击向上换位后仅有一个本位答号的情况下，获取“本答号相同位号的选项”，相当于选项换位。
+1       'Me.选项1.Value = Switch(Nz(Me.答1) = 1, [文句1], Nz(Me.答2) = 1, [文句2], Nz(Me.答3) = 1, [文句3], _
+                             Nz(Me.答1) = 1, [文句1], Nz(Me.答1) = 2, [文句2], Nz(Me.答1) = 3, [文句3], True, [文句1])
+     'Me.选项2.Value = Switch(Nz(Me.答1) = 2, [文句1], Nz(Me.答2) = 2, [文句2], Nz(Me.答3) = 2, [文句3], _
+                             Nz(Me.答2) = 1, [文句1], Nz(Me.答2) = 2, [文句2], Nz(Me.答2) = 3, [文句3], True, [文句2])
+     'Me.选项3.Value = Switch(Nz(Me.答1) = 3, [文句1], Nz(Me.答2) = 3, [文句2], Nz(Me.答3) = 3, [文句3], _
+                             Nz(Me.答3) = 1, [文句1], Nz(Me.答3) = 2, [文句2], Nz(Me.答3) = 3, [文句3], True, [文句3])
+     
+     'tishu = Nz(DCount("*", "sm测验记录题页_今日当前_待答_题卷"))
+     'zuoda = Nz(DCount("作答", "sm测验记录题页_今日当前_待答_题卷"))
+     'If tishu = zuoda + IsNull(Me.答1 & Me.答2 & Me.答3) And Me.交卷.Caption <> "关闭" Then 'Me.交卷.Caption = "全部完成"  '因写入后未跳出更新，暂+1代替。
+     '   Me.交卷.Caption = "全部完成"
+     'ElseIf Me.交卷.Caption <> "关闭" Then
+     '   Me.交卷.Caption = "查看"
+     'End If
+     'daida = Nz(DCount("*", "sm测验记录题页_今日当前_待答_题卷", "IsNull(作答) Or 有错"))
+     'Me.题数.Value = daida
+     'If jishi Then Me.速率.Value = (daidaY - daida) / (jishi * 1440)
+     ''MessageBoxTimeout Me.hwnd, Chr(10) & zuoda, "学科训练室", vbInformation, 0, 1500
+     
+     'Me.Refresh  '刷新全部
+     
+End Sub
+
+Private Sub 选答2_Click()
+     On Error Resume Next  '偶有报错。
+     
+     If IsNull([文句2]) Then
+        Me.答2.Value = Null
+        Me.选答2.Value = Null
+        Me.选项2.Value = Null
+        Me.Tab.SetFocus 'If Me.交卷.Visible Then Me.交卷.SetFocus
+     ElseIf Nz(Me.评价) Like "*√*" And IsNull(Me.选答1) + IsNull(Me.选答2) = 0 Then
+        Me.Tab.SetFocus 'If Me.交卷.Visible Then Me.交卷.SetFocus        '作对后单击自动跳出，不可再通过单击更改，但是可通过键盘更改。
+     Else
+        Dim h As Integer, k As Integer
+        h = Nz(Me.答1) + Nz(Me.答2) + Nz(Me.答3)
+        k = IsNull(Me.选答1) + IsNull(Me.选答2) + IsNull(Me.选答3)
+        
+        If k = -3 And IsNull([文句3]) And IsNull([文句1]) + IsNull([文句2]) = 0 Then '都为空，仅有两个选项，点击则都写入。
+           On Error Resume Next  '偶有报错。？
+           Me.选答1.Value = 1
+           Me.选答2.Value = 2
+           
+               If Me.选项1 = [文句1] Then
+              Me.答1.Value = 2
+           ElseIf Me.选项1 = [文句2] Then
+              Me.答2.Value = 2
+           End If
+               If Me.选项2 = [文句1] Then
+              Me.答1.Value = 1
+           ElseIf Me.选项2 = [文句2] Then
+              Me.答2.Value = 1
+           End If
+           
+           Me.选项1.Value = Switch(Nz(Me.答1) = 1, [文句1], Nz(Me.答2) = 1, [文句2], True, Me.选项1)
+           Me.选项2.Value = Switch(Nz(Me.答1) = 2, [文句1], Nz(Me.答2) = 2, [文句2], True, Me.选项2)
+           
+        ElseIf k = -3 Then  '都为空，有三个选项，向上换位，仅写入1，配后面代码1。
+           On Error Resume Next  '偶有报错。
+           Me.选答1.Value = 1
+               If Me.选项2 = [文句1] Then
+              Me.答1.Value = 1
+           ElseIf Me.选项2 = [文句2] Then
+              Me.答2.Value = 1
+           ElseIf Me.选项2 = [文句3] Then
+              Me.答3.Value = 1
+           End If
+           
+           Me.选项2.Value = Me.选项1
+           If Nz(Me.答1) = 1 Then
+              Me.选项1.Value = [文句1]
+           ElseIf Nz(Me.答2) = 1 Then
+              Me.选项1.Value = [文句2]
+           ElseIf Nz(Me.答3) = 1 Then
+              Me.选项1.Value = [文句3]
+           End If
+           
+        ElseIf k = 0 Or IsNull([文句3]) And IsNull([文句1]) + IsNull([文句2]) = 0 Then '都不空，或仅有的两个选项不空，向上换位。
+           On Error Resume Next  '偶有不能更新而报错，貌似选答1自动写入答2后还没有更新，而再单击选答2写入答2则报错。
+           'Me.答2.Requery  '.Refresh
+           Me.Refresh  '刷新全部
+           
+               If Me.选项1 = [文句1] Then
+              Me.答1.Value = 2
+           ElseIf Me.选项1 = [文句2] Then
+              Me.答2.Value = 2
+           ElseIf Me.选项1 = [文句3] Then
+              Me.答3.Value = 2
+           End If
+           
+               If Me.选项2 = [文句1] Then
+              Me.答1.Value = 1
+           ElseIf Me.选项2 = [文句2] Then
+              Me.答2.Value = 1
+           ElseIf Me.选项2 = [文句3] Then
+              Me.答3.Value = 1
+           End If
+           
+           '    If Me.选项3 = [文句1] Then
+           '   Me.答1.Value = 3
+           'ElseIf Me.选项3 = [文句2] Then
+           '   Me.答2.Value = 3
+           'ElseIf Me.选项3 = [文句3] Then
+           '   Me.答3.Value = 3
+           'End If
+           
+           Me.选答1.Value = IIf(IsNull(Me.答1), Null, 1)
+           Me.选答2.Value = IIf(IsNull(Me.答2), Null, 2)
+           Me.选答3.Value = IIf(IsNull(Me.答3), Null, 3)
+           
+           Me.选项1.Value = Switch(Nz(Me.答1) = 1, [文句1], Nz(Me.答2) = 1, [文句2], Nz(Me.答3) = 1, [文句3], True, Me.选项1)
+           Me.选项2.Value = Switch(Nz(Me.答1) = 2, [文句1], Nz(Me.答2) = 2, [文句2], Nz(Me.答3) = 2, [文句3], True, Me.选项2)
+           Me.选项3.Value = Switch(Nz(Me.答1) = 3, [文句1], Nz(Me.答2) = 3, [文句2], Nz(Me.答3) = 3, [文句3], True, Me.选项3)
+           
+        ElseIf k = -2 And IsNull(Me.选答2) = False Then  '都不空、仅当前不空，点击则清空2、3。 k = 0 Or
+           'Me.选答1.Value = Null
+           '    If Me.选项1 = [文句1] Then
+           '   Me.答1.Value = Null
+           'ElseIf Me.选项1 = [文句2] Then
+           '   Me.答2.Value = Null
+           'ElseIf Me.选项1 = [文句3] Then
+           '   Me.答3.Value = Null
+           'End If
+           
+           Me.选答2.Value = Null
+               If Me.选项2 = [文句1] Then
+              Me.答1.Value = Null
+           ElseIf Me.选项2 = [文句2] Then
+              Me.答2.Value = Null
+           ElseIf Me.选项2 = [文句3] Then
+              Me.答3.Value = Null
+           End If
+           
+           Me.选答3.Value = Null
+               If Me.选项3 = [文句1] Then
+              Me.答1.Value = Null
+           ElseIf Me.选项3 = [文句2] Then
+              Me.答2.Value = Null
+           ElseIf Me.选项3 = [文句3] Then
+              Me.答3.Value = Null
+           End If
+           
+        ElseIf h = 1 And Me.选答1 = 1 Then  '已有1，点击写入2，并自动写入3。
+           'If IsNull(Me.答1) Then Me.答1.Value = Switch(Me.选项1 = [文句1], 1, Me.选项1 = [文句2], 2, Me.选项1 = [文句3], 3)
+           'If IsNull(Me.答2) Then Me.答2.Value = Switch(Me.选项2 = [文句1], 1, Me.选项2 = [文句2], 2, Me.选项2 = [文句3], 3)
+           'If IsNull(Me.答3) Then Me.答3.Value = Switch(Me.选项3 = [文句1], 1, Me.选项3 = [文句2], 2, Me.选项3 = [文句3], 3)
+           
+           'If IsNull(Me.选答1) Then Me.选答1.Value = 1
+           '    If Me.选项1 = [文句1] Then
+           '   Me.答1.Value = 1
+           'ElseIf Me.选项1 = [文句2] Then
+           '   Me.答2.Value = 1
+           'ElseIf Me.选项1 = [文句3] Then
+           '   Me.答3.Value = 1
+           'End If
+           
+           If IsNull(Me.选答2) Then Me.选答2.Value = 2
+               If Me.选项2 = [文句1] Then
+              Me.答1.Value = 2
+           ElseIf Me.选项2 = [文句2] Then
+              Me.答2.Value = 2
+           ElseIf Me.选项2 = [文句3] Then
+              Me.答3.Value = 2
+           End If
+           
+           If IsNull(Me.选答3) And IsNull([文句3]) = False Then Me.选答3.Value = 3
+               If Me.选项3 = [文句1] Then
+              Me.答1.Value = 3
+           ElseIf Me.选项3 = [文句2] Then
+              Me.答2.Value = 3
+           ElseIf Me.选项3 = [文句3] Then
+              Me.答3.Value = 3
+           End If
+           
+           Me.选项1.Value = Switch(Nz(Me.答1) = 1, [文句1], Nz(Me.答2) = 1, [文句2], Nz(Me.答3) = 1, [文句3], True, Me.选项1)
+           Me.选项2.Value = Switch(Nz(Me.答1) = 2, [文句1], Nz(Me.答2) = 2, [文句2], Nz(Me.答3) = 2, [文句3], True, Me.选项2)
+           Me.选项3.Value = Switch(Nz(Me.答1) = 3, [文句1], Nz(Me.答2) = 3, [文句2], Nz(Me.答3) = 3, [文句3], True, Me.选项3)
+           
+        'ElseIf IsNull(Me.选答2) Then  '键入情况下，仅当前空。'应付Me.选答1 <> 1。待完善。
+        '   Me.答2.Value = Switch(H = 0, 1, H = 1, 2, H = 2, 1, H = 3, IIf(k = -1, 3, 1), H = 4, 2, H = 5, 1, H = 6, Null)
+        '   Me.选答2.Value = 2
+        '   Me.选答3.Value = 3
+        
+        Else 'If IsNull(Me.选答2) = False Then '非空点击则清空。暂没用。
+           'MessageBoxTimeout Me.hwnd, 1, "学科训练室", 64, 0, 1500
+           Me.选答2.Value = Null
+           'Me.答2.Value = Null
+               If Me.选项2 = [文句1] Then
+              Me.答1.Value = Null
+           ElseIf Me.选项2 = [文句2] Then
+              Me.答2.Value = Null
+           ElseIf Me.选项2 = [文句3] Then
+              Me.答3.Value = Null
+           End If
+           
+        End If
+        
+        On Error Resume Next '偶有错卡。
+        Me.Refresh  '刷新全部
+        
+     End If
+     
+     'If Nz(Me.答2) = 2 Then
+     '   If IsNull(Me.答1) And IsNull([文句1]) = False Then Me.答1.Value = 3
+     '   If IsNull(Me.答2) And IsNull([文句2]) = False Then Me.答2.Value = 3
+     '   If IsNull(Me.答3) And IsNull([文句3]) = False Then Me.答3.Value = 3
+     'End If
+     
+     '前为非则显示本位选项。 前面是根据非本位答号获取与“本位号相同答号的选项”， _
+     后面是点击向上换位后仅有一个本位答号的情况下，获取“本答号相同位号的选项”，相当于选项换位。
+1       'Me.选项1.Value = Switch(Nz(Me.答1) = 1, [文句1], Nz(Me.答2) = 1, [文句2], Nz(Me.答3) = 1, [文句3], _
+                             Nz(Me.答1) = 1, [文句1], Nz(Me.答1) = 2, [文句2], Nz(Me.答1) = 3, [文句3], True, [文句1])
+     'Me.选项2.Value = Switch(Nz(Me.答1) = 2, [文句1], Nz(Me.答2) = 2, [文句2], Nz(Me.答3) = 2, [文句3], _
+                             Nz(Me.答2) = 1, [文句1], Nz(Me.答2) = 2, [文句2], Nz(Me.答2) = 3, [文句3], True, [文句2])
+     'Me.选项3.Value = Switch(Nz(Me.答1) = 3, [文句1], Nz(Me.答2) = 3, [文句2], Nz(Me.答3) = 3, [文句3], _
+                             Nz(Me.答3) = 1, [文句1], Nz(Me.答3) = 2, [文句2], Nz(Me.答3) = 3, [文句3], True, [文句3])
+     
+     
+     'tishu = Nz(DCount("*", "sm测验记录题页_今日当前_待答_题卷"))
+     'zuoda = Nz(DCount("*", "sm测验记录题页_今日当前_待答_题卷", "IsNull(作答)=False"))
+     'If tishu = zuoda + IsNull(Me.答1 & Me.答2 & Me.答3) And Me.交卷.Caption <> "关闭" Then
+     '   Me.交卷.Caption = "全部完成"
+     'ElseIf Me.交卷.Caption <> "关闭" Then
+     '   Me.交卷.Caption = "查看"
+     'End If
+     'daida = Nz(DCount("*", "sm测验记录题页_今日当前_待答_题卷", "IsNull(作答) Or 有错"))
+     'Me.题数.Value = daida
+     'If jishi Then Me.速率.Value = (daidaY - daida) / (jishi * 1440)
+     ''因写入后未跳出更新，暂+ IsNull(Me.答1 & Me.答2 & Me.答3)代替。
+     ''Me.Refresh在后，则IsNull(Me.答1 & Me.答2 & Me.答3)=-3写入"全部完成"；Me.Refresh在前，则IsNull(Me.答1 & Me.答2 & Me.答3)=-1写入"全部完成"。
+     
+     'Me.Refresh  '刷新全部
+        
+End Sub
+
+Private Sub 选答3_Click()
+     On Error Resume Next  '偶有报错。
+     
+     If IsNull([文句3]) Then
+        Me.答3.Value = Null
+        Me.选答3.Value = Null
+        Me.选项3.Value = Null
+        Me.Tab.SetFocus 'If Me.交卷.Visible Then Me.交卷.SetFocus
+     ElseIf Nz(Me.评价) Like "*√*" And IsNull(Me.选答1) + IsNull(Me.选答2) = 0 Then
+        Me.Tab.SetFocus 'If Me.交卷.Visible Then Me.交卷.SetFocus        '作对后单击自动跳出，不可再通过单击更改，但是可通过键盘更改。
+     Else
+        Dim h As Integer, k As Integer
+        h = Nz(Me.答1) + Nz(Me.答2) + Nz(Me.答3)
+        'k = IsNull(Me.答1) + IsNull(Me.答2) + IsNull(Me.答3)
+        k = IsNull(Me.选答1) + IsNull(Me.选答2) + IsNull(Me.选答3)
+        
+        If k = -3 Then  '都空，且有三个选项，点击则选项3本位答号写入1，选项3显示在选项1，选项3显示选项1。
+           
+           On Error Resume Next '偶有报错
+           Me.选答1.Value = 1
+           
+               If Me.选项3 = [文句1] Then
+              Me.答1.Value = 1
+           ElseIf Me.选项3 = [文句2] Then
+              Me.答2.Value = 1
+           ElseIf Me.选项3 = [文句3] Then
+              Me.答3.Value = 1
+           End If
+           
+           Me.选项3.Value = Me.选项2
+           Me.选项2.Value = Me.选项1
+           
+               If Nz(Me.答1) = 1 Then
+              Me.选项1.Value = [文句1]
+           ElseIf Nz(Me.答2) = 1 Then
+              Me.选项1.Value = [文句2]
+           ElseIf Nz(Me.答3) = 1 Then
+              Me.选项1.Value = [文句3]
+           End If
+           
+        ElseIf k = 0 Then  '都不空，向上换位。
+           '    If Me.选项1 = [文句1] Then
+           '   Me.答1.Value = 1
+           'ElseIf Me.选项1 = [文句2] Then
+           '   Me.答2.Value = 1
+           'ElseIf Me.选项1 = [文句3] Then
+           '   Me.答3.Value = 1
+           'End If
+           
+           On Error Resume Next  '偶有不能更新而报错，貌似选答2自动写入答3后还没有更新，而再单击选答3写入答3则报错。
+           'Me.答3.Requery  '.Refresh
+           Me.Refresh  '刷新全部
+           
+               If Me.选项2 = [文句1] Then
+              Me.答1.Value = 3
+           ElseIf Me.选项2 = [文句2] Then
+              Me.答2.Value = 3
+           ElseIf Me.选项2 = [文句3] Then
+              Me.答3.Value = 3
+           End If
+           
+               If Me.选项3 = [文句1] Then
+              Me.答1.Value = 2
+           ElseIf Me.选项3 = [文句2] Then
+              Me.答2.Value = 2
+           ElseIf Me.选项3 = [文句3] Then
+              Me.答3.Value = 2
+           End If
+           
+           Me.选答1.Value = IIf(IsNull(Me.答1), Null, 1)
+           Me.选答2.Value = IIf(IsNull(Me.答2), Null, 2)
+           Me.选答3.Value = IIf(IsNull(Me.答3), Null, 3)
+           
+           Me.选项1.Value = Switch(Nz(Me.答1) = 1, [文句1], Nz(Me.答2) = 1, [文句2], Nz(Me.答3) = 1, [文句3], True, Me.选项1)
+           Me.选项2.Value = Switch(Nz(Me.答1) = 2, [文句1], Nz(Me.答2) = 2, [文句2], Nz(Me.答3) = 2, [文句3], True, Me.选项2)
+           Me.选项3.Value = Switch(Nz(Me.答1) = 3, [文句1], Nz(Me.答2) = 3, [文句2], Nz(Me.答3) = 3, [文句3], True, Me.选项3)
+           
+        ElseIf k = -2 And IsNull(Me.选答3) = False Then  '都不空、仅当前不空，点击则仅清空3。 k = 0 Or
+           'Me.选答1.Value = Null
+           '    If Me.选项1 = [文句1] Then
+           '   Me.答1.Value = Null
+           'ElseIf Me.选项1 = [文句2] Then
+           '   Me.答2.Value = Null
+           'ElseIf Me.选项1 = [文句3] Then
+           '   Me.答3.Value = Null
+           'End If
+           
+           Me.选答2.Value = Null
+               If Me.选项2 = [文句1] Then
+              Me.答1.Value = Null
+           ElseIf Me.选项2 = [文句2] Then
+              Me.答2.Value = Null
+           ElseIf Me.选项2 = [文句3] Then
+              Me.答3.Value = Null
+           End If
+           
+           Me.选答3.Value = Null
+               If Me.选项3 = [文句1] Then
+              Me.答1.Value = Null
+           ElseIf Me.选项3 = [文句2] Then
+              Me.答2.Value = Null
+           ElseIf Me.选项3 = [文句3] Then
+              Me.答3.Value = Null
+           End If
+           
+        ElseIf k = -1 And IsNull(Me.选答3) = False Then  '仅一个空，向空换位，配后面代码1。暂没用，现为自动写入答号3。
+           If IsNull(Me.选答1) Then
+              Me.答1.Value = Me.答3
+              Me.选答1.Value = 1
+              Me.答3.Value = Switch(Me.选项1 = [文句1], 1, Me.选项1 = [文句2], 2, Me.选项1 = [文句3], 3)
+           ElseIf IsNull(Me.选答2) Then
+              Me.答2.Value = Me.答3
+              Me.选答2.Value = 2
+              Me.答3.Value = Switch(Me.选项2 = [文句1], 1, Me.选项2 = [文句2], 2, Me.选项2 = [文句3], 3)
+           End If
+           
+        ElseIf h = 1 And Me.选答1 = 1 And IsNull(Me.选答3) Then   '已有1。
+           
+           'If IsNull(Me.选答1) Then Me.选答1.Value = 1
+           '    If Me.选项1 = [文句1] Then
+           '   Me.答1.Value = 1
+           'ElseIf Me.选项1 = [文句2] Then
+           '   Me.答2.Value = 1
+           'ElseIf Me.选项1 = [文句3] Then
+           '   Me.答3.Value = 1
+           'End If
+           
+           If IsNull(Me.选答2) Then Me.选答2.Value = 2
+               If Me.选项2 = [文句1] Then
+              Me.答1.Value = 3
+           ElseIf Me.选项2 = [文句2] Then
+              Me.答2.Value = 3
+           ElseIf Me.选项2 = [文句3] Then
+              Me.答3.Value = 3
+           End If
+           
+           If IsNull(Me.选答3) And IsNull([文句3]) = False Then Me.选答3.Value = 3
+               If Me.选项3 = [文句1] Then
+              Me.答1.Value = 2
+           ElseIf Me.选项3 = [文句2] Then
+              Me.答2.Value = 2
+           ElseIf Me.选项3 = [文句3] Then
+              Me.答3.Value = 2
+           End If
+           
+           Me.选项1.Value = Switch(Nz(Me.答1) = 1, [文句1], Nz(Me.答2) = 1, [文句2], Nz(Me.答3) = 1, [文句3], True, Me.选项1)
+           Me.选项2.Value = Switch(Nz(Me.答1) = 2, [文句1], Nz(Me.答2) = 2, [文句2], Nz(Me.答3) = 2, [文句3], True, Me.选项2)
+           Me.选项3.Value = Switch(Nz(Me.答1) = 3, [文句1], Nz(Me.答2) = 3, [文句2], Nz(Me.答3) = 3, [文句3], True, Me.选项3)
+           
+        ElseIf h = 1 And Me.选答1 = 1 And Me.答3 = 1 Then   '仅有1，已点3为1，再次点新3即原1为2，并写入最新的3。
+           'If Me.选项3 = [文句1] Then
+           '   Me.答1.Value = 2
+           'ElseIf Me.选项3 = [文句2] Then
+           '   Me.答2.Value = 2
+           'End If
+           '
+           'If Me.选项2 = [文句1] Then
+           '   Me.答1.Value = 3
+           'ElseIf Me.选项2 = [文句2] Then
+           '   Me.答2.Value = 3
+           'End If
+           Me.答1.Value = 2  '此处为直接取值，上面为计算取值，也可用。
+           Me.答2.Value = 3
+           
+           'If IsNull(Me.选答1) Then Me.选答1.Value = 1
+           If IsNull(Me.选答2) Then Me.选答2.Value = 2
+           If IsNull(Me.选答3) And IsNull([文句3]) = False Then Me.选答3.Value = 3
+           
+        ElseIf IsNull(Me.选答3) Then  '仅有1，已点1为1或点2为1。
+           Me.答3.Value = Switch(h = 0, 1, h = 1, 2, h = 2, 1, h = 3, IIf(k = -1, 3, 1), h = 4, 2, h = 5, 1, h = 6, Null)
+           Me.选答2.Value = 2
+           Me.选答3.Value = 3
+           
+        Else '非空点击则清空。暂没用。
+           Me.选答3.Value = Null
+               If Me.选项3 = [文句1] Then
+              Me.答1.Value = Null
+           ElseIf Me.选项3 = [文句2] Then
+              Me.答2.Value = Null
+           ElseIf Me.选项3 = [文句3] Then
+              Me.答3.Value = Null
+           End If
+        End If
+        
+        On Error Resume Next  '偶有报错。
+        Me.Refresh  '刷新全部
+        
+     End If
+     
+     'If Nz(Me.答3) = 2 Then  '自动写入答号3。
+     '   If IsNull(Me.答1) And IsNull([文句1]) = False Then Me.答1.Value = 3
+     '   If IsNull(Me.答2) And IsNull([文句2]) = False Then Me.答2.Value = 3
+     '   If IsNull(Me.答3) And IsNull([文句3]) = False Then Me.答3.Value = 3
+     'End If
+     
+     '前为非则显示本位选项。 前面是根据非本位答号获取与“本位号相同答号的选项”， _
+     后面是点击向上换位后仅有一个本位答号的情况下，获取“本答号相同位号的选项”，相当于选项换位。
+1       'Me.选项1.Value = Switch(Nz(Me.答1) = 1, [文句1], Nz(Me.答2) = 1, [文句2], Nz(Me.答3) = 1, [文句3], _
+                             Nz(Me.答1) = 1, [文句1], Nz(Me.答1) = 2, [文句2], Nz(Me.答1) = 3, [文句3], True, [文句1])
+     'Me.选项2.Value = Switch(Nz(Me.答1) = 2, [文句1], Nz(Me.答2) = 2, [文句2], Nz(Me.答3) = 2, [文句3], _
+                             Nz(Me.答2) = 1, [文句1], Nz(Me.答2) = 2, [文句2], Nz(Me.答2) = 3, [文句3], True, [文句2])
+     'Me.选项3.Value = Switch(Nz(Me.答1) = 3, [文句1], Nz(Me.答2) = 3, [文句2], Nz(Me.答3) = 3, [文句3], _
+                             Nz(Me.答3) = 1, [文句1], Nz(Me.答3) = 2, [文句2], Nz(Me.答3) = 3, [文句3], True, [文句3])
+     
+     
+     'tishu = Nz(DCount("*", "sm测验记录题页_今日当前_待答_题卷"))
+     'zuoda = Nz(DCount("*", "sm测验记录题页_今日当前_待答_题卷", "Len(Nz(作答))"))
+     'If tishu = zuoda + IsNull(Me.答1 & Me.答2 & Me.答3) And Me.交卷.Caption <> "关闭" Then 'Me.交卷.Caption = "全部完成"  '因写入后未跳出更新，暂+1代替。
+     '   Me.交卷.Caption = "全部完成"
+     'ElseIf Me.交卷.Caption <> "关闭" Then
+     '   Me.交卷.Caption = "查看"
+     'End If
+     'daida = Nz(DCount("*", "sm测验记录题页_今日当前_待答_题卷", "IsNull(作答) Or 有错"))
+     'Me.题数.Value = daida
+     'If jishi Then Me.速率.Value = (daidaY - daida) / (jishi * 1440)
+     
+     'Me.Refresh  '刷新全部
+
+End Sub
+
+Private Sub 选答3_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
+     Call HyperlinkMouseMove([选答2])
+
+End Sub
+
+Private Sub 选项1_Enter()
+     If Not Nz(Me.评价) Like "*√*" Then Me.Tab.SetFocus 'If Me.交卷.Visible Then Me.交卷.SetFocus  '答案正确前自动跳出，答案正确后才可划选翻译答案。
+     Exit Sub '停用。
+     
+     If IsNull([文句1]) Then
+        Me.答1.Value = Null
+        Me.选项1.Value = Null
+     ElseIf IsNull([得分]) Then  '快捷换选，得分后不再有快捷换选功能，以防止轻松蒙换答案。 'Nz(Me.评价) = 0 Not Nz(Me.评价) Like "*√*"
+        Dim h As Integer, k As Integer
+        h = Nz(Me.答1) + Nz(Me.答2) + Nz(Me.答3)
+        k = IsNull(Me.选答1) + IsNull(Me.选答2) + IsNull(Me.选答3)
+        
+        If k = -1 And IsNull([文句3]) = False Then '有一空，暂跳出，待改进。
+           Me.Tab.SetFocus 'If Me.交卷.Visible Then Me.交卷.SetFocus
+           Exit Sub
+           
+        ElseIf k = -3 And IsNull([文句3]) And IsNull([文句1]) + IsNull([文句2]) = 0 Then '都为空，仅有两个选项，点击则都写入。
+           Me.选答1.Value = 1
+           Me.选答2.Value = 2
+           
+               If Me.选项1 = [文句1] Then
+              Me.答1.Value = 1
+           ElseIf Me.选项1 = [文句2] Then
+              Me.答2.Value = 1
+           End If
+               If Me.选项2 = [文句1] Then
+              Me.答1.Value = 2
+           ElseIf Me.选项2 = [文句2] Then
+              Me.答2.Value = 2
+           End If
+           
+           Me.选项1.Value = Switch(Nz(Me.答1) = 1, [文句1], Nz(Me.答2) = 1, [文句2], True, Me.选项1)
+           Me.选项2.Value = Switch(Nz(Me.答1) = 2, [文句1], Nz(Me.答2) = 2, [文句2], True, Me.选项2)
+           
+        ElseIf k = -3 Then '都为空。
+           Me.选答1.Value = 1
+               If Me.选项1 = [文句1] Then
+              Me.答1.Value = 1
+           ElseIf Me.选项1 = [文句2] Then
+              Me.答2.Value = 1
+           ElseIf Me.选项1 = [文句3] Then
+              Me.答3.Value = 1
+           End If
+           
+           'Me.选项1.Value = Me.选项1
+           If Nz(Me.答1) = 1 Then
+              Me.选项1.Value = [文句1]
+           ElseIf Nz(Me.答2) = 1 Then
+              Me.选项1.Value = [文句2]
+           ElseIf Nz(Me.答3) = 1 Then
+              Me.选项1.Value = [文句3]
+           End If
+           
+        'ElseIf k = -2 And IsNull(Me.选答1) = False Then  '仅1不空，点击则清空全部。
+        '   Me.答1.Value = Null
+        '   Me.答2.Value = Null
+        '   Me.答3.Value = Null
+        '   Me.选答1.Value = Null
+        '   Me.选答2.Value = Null
+        '   Me.选答3.Value = Null
+        
+        Else  '换位
+           If IsNull([文句3]) Then  '适用于少数无选项3的情况。
+                  If Me.选项1 = [文句1] Then
+                 Me.答1.Value = 2
+              ElseIf Me.选项1 = [文句2] Then
+                 Me.答2.Value = 2
+              ElseIf Me.选项1 = [文句3] Then
+                 Me.答3.Value = 2
+              End If
+              
+                  If Me.选项2 = [文句1] Then
+                 Me.答1.Value = 1
+              ElseIf Me.选项2 = [文句2] Then
+                 Me.答2.Value = 1
+              ElseIf Me.选项2 = [文句3] Then
+                 Me.答3.Value = 1
+              End If
+           Else  '适用于多数有选项3的情况。
+                  If Me.选项1 = [文句1] Then
+                 Me.答1.Value = 2
+              ElseIf Me.选项1 = [文句2] Then
+                 Me.答2.Value = 2
+              ElseIf Me.选项1 = [文句3] Then
+                 Me.答3.Value = 2
+              End If
+              
+                  If Me.选项2 = [文句1] Then
+                 Me.答1.Value = 3
+              ElseIf Me.选项2 = [文句2] Then
+                 Me.答2.Value = 3
+              ElseIf Me.选项2 = [文句3] Then
+                 Me.答3.Value = 3
+              End If
+              
+                  If Me.选项3 = [文句1] Then
+                 Me.答1.Value = 1
+              ElseIf Me.选项3 = [文句2] Then
+                 Me.答2.Value = 1
+              ElseIf Me.选项3 = [文句3] Then
+                 Me.答3.Value = 1
+              End If
+           End If
+           
+           Me.选答1.Value = IIf(IsNull(Me.答1), Null, 1)
+           Me.选答2.Value = IIf(IsNull(Me.答2), Null, 2)
+           Me.选答3.Value = IIf(IsNull(Me.答3), Null, 3)
+           
+           Me.选项1.Value = Switch(Nz(Me.答1) = 1, [文句1], Nz(Me.答2) = 1, [文句2], Nz(Me.答3) = 1, [文句3], True, Me.选项1)
+           Me.选项2.Value = Switch(Nz(Me.答1) = 2, [文句1], Nz(Me.答2) = 2, [文句2], Nz(Me.答3) = 2, [文句3], True, Me.选项2)
+           Me.选项3.Value = Switch(Nz(Me.答1) = 3, [文句1], Nz(Me.答2) = 3, [文句2], Nz(Me.答3) = 3, [文句3], True, Me.选项3)
+        End If
+        
+        Me.Refresh  '刷新全部
+        
+     End If
+     
+     'tishu = Nz(DCount("*", "sm测验记录题页_今日当前_待答_题卷"))
+     'zuoda = Nz(DCount("*", "sm测验记录题页_今日当前_待答_题卷", "Len(Nz(作答))"))
+     'If tishu = zuoda + IsNull(Me.答1 & Me.答2 & Me.答3) And Me.交卷.Caption <> "关闭" Then Me.交卷.Caption = "全部完成"  '因写入后未跳出更新，暂+1代替。
+     'daida = Nz(DCount("*", "sm测验记录题页_今日当前_待答_题卷", "IsNull(作答) Or 有错"))
+     'Me.题数.Value = daida
+     'If jishi Then Me.速率.Value = (daidaY - daida) / (jishi * 1440)
+     
+     'Me.Refresh  '刷新全部
+     
+     If IsNull([得分]) Then Me.Tab.SetFocus 'If Me.交卷.Visible Then Me.交卷.SetFocus  '得分前自动跳出，得分后可划选字符通过电子词典翻译以便理解答案。
+        
+End Sub
+
+Private Sub 选项2_Enter()
+     If Not Nz(Me.评价) Like "*√*" Then Me.Tab.SetFocus 'If Me.交卷.Visible Then Me.交卷.SetFocus  '答案正确前自动跳出，答案正确后才可划选翻译答案。
+     Exit Sub '停用。
+     
+     If IsNull([文句2]) Then
+        Me.答2.Value = Null
+        Me.选项2.Value = Null
+     ElseIf IsNull([得分]) Then
+        Dim h As Integer, k As Integer
+        h = Nz(Me.答1) + Nz(Me.答2) + Nz(Me.答3)
+        k = IsNull(Me.选答1) + IsNull(Me.选答2) + IsNull(Me.选答3)
+        
+        If k = -1 And IsNull([文句3]) = False Then '有一空，暂跳出，待改进。
+           Me.Tab.SetFocus 'If Me.交卷.Visible Then Me.交卷.SetFocus
+           Exit Sub
+           
+        ElseIf k = -3 And IsNull([文句3]) And IsNull([文句1]) + IsNull([文句2]) = 0 Then '都为空，仅有两个选项，点击则都写入。
+           Me.选答1.Value = 1
+           Me.选答2.Value = 2
+           
+               If Me.选项1 = [文句1] Then
+              Me.答1.Value = 2
+           ElseIf Me.选项1 = [文句2] Then
+              Me.答2.Value = 2
+           End If
+               If Me.选项2 = [文句1] Then
+              Me.答1.Value = 1
+           ElseIf Me.选项2 = [文句2] Then
+              Me.答2.Value = 1
+           End If
+           
+           Me.选项1.Value = Switch(Nz(Me.答1) = 1, [文句1], Nz(Me.答2) = 1, [文句2], True, Me.选项1)
+           Me.选项2.Value = Switch(Nz(Me.答1) = 2, [文句1], Nz(Me.答2) = 2, [文句2], True, Me.选项2)
+           
+        ElseIf k = -3 Then '都为空。
+           Me.选答1.Value = 1
+               If Me.选项2 = [文句1] Then
+              Me.答1.Value = 1
+           ElseIf Me.选项2 = [文句2] Then
+              Me.答2.Value = 1
+           ElseIf Me.选项2 = [文句3] Then
+              Me.答3.Value = 1
+           End If
+           
+           Me.选项2.Value = Me.选项1
+           If Nz(Me.答1) = 1 Then
+              Me.选项1.Value = [文句1]
+           ElseIf Nz(Me.答2) = 1 Then
+              Me.选项1.Value = [文句2]
+           ElseIf Nz(Me.答3) = 1 Then
+              Me.选项1.Value = [文句3]
+           End If
+           
+        ElseIf h = 1 And Me.选答1 = 1 Then  '已有1，点击写入2，并自动写入3。
+           
+           'If IsNull(Me.选答1) Then Me.选答1.Value = 1
+           '    If Me.选项1 = [文句1] Then
+           '   Me.答1.Value = 1
+           'ElseIf Me.选项1 = [文句2] Then
+           '   Me.答2.Value = 1
+           'ElseIf Me.选项1 = [文句3] Then
+           '   Me.答3.Value = 1
+           'End If
+           
+           If IsNull(Me.选答2) Then Me.选答2.Value = 2
+               If Me.选项2 = [文句1] Then
+              Me.答1.Value = 2
+           ElseIf Me.选项2 = [文句2] Then
+              Me.答2.Value = 2
+           ElseIf Me.选项2 = [文句3] Then
+              Me.答3.Value = 2
+           End If
+           
+           If IsNull(Me.选答3) And IsNull([文句3]) = False Then Me.选答3.Value = 3
+               If Me.选项3 = [文句1] Then
+              Me.答1.Value = 3
+           ElseIf Me.选项3 = [文句2] Then
+              Me.答2.Value = 3
+           ElseIf Me.选项3 = [文句3] Then
+              Me.答3.Value = 3
+           End If
+           
+           Me.选项1.Value = Switch(Nz(Me.答1) = 1, [文句1], Nz(Me.答2) = 1, [文句2], Nz(Me.答3) = 1, [文句3], True, Me.选项1)
+           Me.选项2.Value = Switch(Nz(Me.答1) = 2, [文句1], Nz(Me.答2) = 2, [文句2], Nz(Me.答3) = 2, [文句3], True, Me.选项2)
+           Me.选项3.Value = Switch(Nz(Me.答1) = 3, [文句1], Nz(Me.答2) = 3, [文句2], Nz(Me.答3) = 3, [文句3], True, Me.选项3)
+           
+        Else  '换位
+           '[答1].Value = Switch(Me.选项2 = [文句1], 1, Me.选项2 = [文句2], 2, Me.选项2 = [文句3], 3)
+           '[答2].Value = Switch(Me.选项1 = [文句1], 1, Me.选项1 = [文句2], 2, Me.选项1 = [文句3], 3)
+           
+               If Me.选项1 = [文句1] Then
+              Me.答1.Value = 2
+           ElseIf Me.选项1 = [文句2] Then
+              Me.答2.Value = 2
+           ElseIf Me.选项1 = [文句3] Then
+              Me.答3.Value = 2
+           End If
+           
+               If Me.选项2 = [文句1] Then
+              Me.答1.Value = 1
+           ElseIf Me.选项2 = [文句2] Then
+              Me.答2.Value = 1
+           ElseIf Me.选项2 = [文句3] Then
+              Me.答3.Value = 1
+           End If
+           
+           '    If Me.选项3 = [文句1] Then
+           '   Me.答1.Value = 3
+           'ElseIf Me.选项3 = [文句2] Then
+           '   Me.答2.Value = 3
+           'ElseIf Me.选项3 = [文句3] Then
+           '   Me.答3.Value = 3
+           'End If
+           
+           Me.选答1.Value = IIf(IsNull(Me.答1), Null, 1)
+           Me.选答2.Value = IIf(IsNull(Me.答2), Null, 2)
+           Me.选答3.Value = IIf(IsNull(Me.答3), Null, 3)
+           
+           Me.选项1.Value = Switch(Nz(Me.答1) = 1, [文句1], Nz(Me.答2) = 1, [文句2], Nz(Me.答3) = 1, [文句3], True, Me.选项1)
+           Me.选项2.Value = Switch(Nz(Me.答1) = 2, [文句1], Nz(Me.答2) = 2, [文句2], Nz(Me.答3) = 2, [文句3], True, Me.选项2)
+           Me.选项3.Value = Switch(Nz(Me.答1) = 3, [文句1], Nz(Me.答2) = 3, [文句2], Nz(Me.答3) = 3, [文句3], True, Me.选项3)
+        End If
+        
+        'If Nz(Me.答2) = 2 Then
+        '   If IsNull(Me.答1) And IsNull([文句1]) = False Then Me.答1.Value = 3
+        '   If IsNull(Me.答2) And IsNull([文句2]) = False Then Me.答2.Value = 3
+        '   If IsNull(Me.答3) And IsNull([文句3]) = False Then Me.答3.Value = 3
+        'End If
+        
+        'Me.选答1.Value = IIf(IsNull(Me.答1), Null, 1)
+        'Me.选答2.Value = IIf(IsNull(Me.答2), Null, 2)
+        'Me.选答3.Value = IIf(IsNull(Me.答3), Null, 3)
+        
+        'Me.选项1.Value = Switch(Nz(Me.答1) = 1, [文句1], Nz(Me.答2) = 1, [文句2], Nz(Me.答3) = 1, [文句3], True, [文句1])
+        'Me.选项2.Value = Switch(Nz(Me.答1) = 2, [文句1], Nz(Me.答2) = 2, [文句2], Nz(Me.答3) = 2, [文句3], True, [文句2])
+        'Me.选项3.Value = Switch(Nz(Me.答1) = 3, [文句1], Nz(Me.答2) = 3, [文句2], Nz(Me.答3) = 3, [文句3], True, [文句3])
+        
+        Me.Refresh  '刷新全部
+        
+     End If
+     
+     'tishu = Nz(DCount("*", "sm测验记录题页_今日当前_待答_题卷"))
+     'zuoda = Nz(DCount("*", "sm测验记录题页_今日当前_待答_题卷", "Len(Nz(作答))"))
+     'If tishu = zuoda + IsNull(Me.答1 & Me.答2 & Me.答3) And Me.交卷.Caption <> "关闭" Then Me.交卷.Caption = "全部完成"  '因写入后未跳出更新，暂+1代替。
+     'daida = Nz(DCount("*", "sm测验记录题页_今日当前_待答_题卷", "IsNull(作答) Or 有错"))
+     'Me.题数.Value = daida
+     'If jishi Then Me.速率.Value = (daidaY - daida) / (jishi * 1440)
+     
+     'Me.Refresh  '刷新全部
+     
+     If IsNull([得分]) Then Me.Tab.SetFocus 'If Me.交卷.Visible Then Me.交卷.SetFocus
+     
+End Sub
+
+Private Sub 选项3_Enter()
+     If Not Nz(Me.评价) Like "*√*" Then Me.Tab.SetFocus 'If Me.交卷.Visible Then Me.交卷.SetFocus  '答案正确前自动跳出，答案正确后才可划选翻译答案。
+     Exit Sub '停用。
+     
+     If IsNull([得分]) Then Me.Tab.SetFocus 'If Me.交卷.Visible Then Me.交卷.SetFocus
+     
+     If IsNull([文句3]) Then
+        Me.答3.Value = Null
+        Me.选答3.Value = Null
+        Me.选项3.Value = Null
+     ElseIf IsNull([得分]) Then
+        Dim h As Integer, k As Integer
+        h = Nz(Me.答1) + Nz(Me.答2) + Nz(Me.答3)
+        'k = IsNull(Me.答1) + IsNull(Me.答2) + IsNull(Me.答3)
+        k = IsNull(Me.选答1) + IsNull(Me.选答2) + IsNull(Me.选答3)
+        
+        If k = -1 And IsNull([文句3]) = False Then '有一空，暂跳出，待改进。
+           Me.Tab.SetFocus 'If Me.交卷.Visible Then Me.交卷.SetFocus
+           Exit Sub
+           
+        ElseIf k = -3 Then '都为空。
+           '[答1].Value = 3  '跳至位号1，选项3也跳至1号位。
+           '[答2].Value = 2  '保持不变。
+           '[答3].Value = 1  '跳至位号3，选项1也跳至3号位。
+           
+           Me.选答1.Value = 1
+           
+               If Me.选项3 = [文句1] Then
+              Me.答1.Value = 1
+           ElseIf Me.选项3 = [文句2] Then
+              Me.答2.Value = 1
+           ElseIf Me.选项3 = [文句3] Then
+              Me.答3.Value = 1
+           End If
+           
+           Me.选项3.Value = Me.选项2
+           Me.选项2.Value = Me.选项1
+               If Nz(Me.答1) = 1 Then
+              Me.选项1.Value = [文句1]
+           ElseIf Nz(Me.答2) = 1 Then
+              Me.选项1.Value = [文句2]
+           ElseIf Nz(Me.答3) = 1 Then
+              Me.选项1.Value = [文句3]
+           End If
+           
+        ElseIf h = 1 And Me.选答1 = 1 And IsNull(Me.选答3) Then   '已有1。
+           
+           'If IsNull(Me.选答1) Then Me.选答1.Value = 1
+           '    If Me.选项1 = [文句1] Then
+           '   Me.答1.Value = 1
+           'ElseIf Me.选项1 = [文句2] Then
+           '   Me.答2.Value = 1
+           'ElseIf Me.选项1 = [文句3] Then
+           '   Me.答3.Value = 1
+           'End If
+           
+           If IsNull(Me.选答2) Then Me.选答2.Value = 2
+               If Me.选项2 = [文句1] Then
+              Me.答1.Value = 3
+           ElseIf Me.选项2 = [文句2] Then
+              Me.答2.Value = 3
+           ElseIf Me.选项2 = [文句3] Then
+              Me.答3.Value = 3
+           End If
+           
+           If IsNull(Me.选答3) And IsNull([文句3]) = False Then Me.选答3.Value = 3
+               If Me.选项3 = [文句1] Then
+              Me.答1.Value = 2
+           ElseIf Me.选项3 = [文句2] Then
+              Me.答2.Value = 2
+           ElseIf Me.选项3 = [文句3] Then
+              Me.答3.Value = 2
+           End If
+           
+           Me.选项1.Value = Switch(Nz(Me.答1) = 1, [文句1], Nz(Me.答2) = 1, [文句2], Nz(Me.答3) = 1, [文句3], True, Me.选项1)
+           Me.选项2.Value = Switch(Nz(Me.答1) = 2, [文句1], Nz(Me.答2) = 2, [文句2], Nz(Me.答3) = 2, [文句3], True, Me.选项2)
+           Me.选项3.Value = Switch(Nz(Me.答1) = 3, [文句1], Nz(Me.答2) = 3, [文句2], Nz(Me.答3) = 3, [文句3], True, Me.选项3)
+                      
+        Else  '换位
+           '    If Me.选项1 = [文句1] Then
+           '   Me.答1.Value = 1
+           'ElseIf Me.选项1 = [文句2] Then
+           '   Me.答2.Value = 1
+           'ElseIf Me.选项1 = [文句3] Then
+           '   Me.答3.Value = 1
+           'End If
+           
+               If Me.选项2 = [文句1] Then
+              Me.答1.Value = 3
+           ElseIf Me.选项2 = [文句2] Then
+              Me.答2.Value = 3
+           ElseIf Me.选项2 = [文句3] Then
+              Me.答3.Value = 3
+           End If
+           
+               If Me.选项3 = [文句1] Then
+              Me.答1.Value = 2
+           ElseIf Me.选项3 = [文句2] Then
+              Me.答2.Value = 2
+           ElseIf Me.选项3 = [文句3] Then
+              Me.答3.Value = 2
+           End If
+           
+           Me.选答1.Value = IIf(IsNull(Me.答1), Null, 1)
+           Me.选答2.Value = IIf(IsNull(Me.答2), Null, 2)
+           Me.选答3.Value = IIf(IsNull(Me.答3), Null, 3)
+           
+           Me.选项1.Value = Switch(Nz(Me.答1) = 1, [文句1], Nz(Me.答2) = 1, [文句2], Nz(Me.答3) = 1, [文句3], True, Me.选项1)
+           Me.选项2.Value = Switch(Nz(Me.答1) = 2, [文句1], Nz(Me.答2) = 2, [文句2], Nz(Me.答3) = 2, [文句3], True, Me.选项2)
+           Me.选项3.Value = Switch(Nz(Me.答1) = 3, [文句1], Nz(Me.答2) = 3, [文句2], Nz(Me.答3) = 3, [文句3], True, Me.选项3)
+        End If
+        
+        'Me.选答1.Value = IIf(IsNull(Me.答1), Null, 1)
+        'Me.选答2.Value = IIf(IsNull(Me.答2), Null, 2)
+        'Me.选答3.Value = IIf(IsNull(Me.答3), Null, 3)
+        
+        'Me.选项1.Value = Switch(Nz(Me.答1) = 1, [文句1], Nz(Me.答2) = 1, [文句2], Nz(Me.答3) = 1, [文句3], True, [文句1])
+        'Me.选项2.Value = Switch(Nz(Me.答1) = 2, [文句1], Nz(Me.答2) = 2, [文句2], Nz(Me.答3) = 2, [文句3], True, [文句2])
+        'Me.选项3.Value = Switch(Nz(Me.答1) = 3, [文句1], Nz(Me.答2) = 3, [文句2], Nz(Me.答3) = 3, [文句3], True, [文句3])
+        
+        Me.Refresh  '刷新全部
+        
+     End If
+     
+     'tishu = Nz(DCount("*", "sm测验记录题页_今日当前_待答_题卷"))
+     'zuoda = Nz(DCount("*", "sm测验记录题页_今日当前_待答_题卷", "Len(Nz(作答))"))
+     'If tishu = zuoda + IsNull(Me.答1 & Me.答2 & Me.答3) And Me.交卷.Caption <> "关闭" Then Me.交卷.Caption = "全部完成"  '因写入后未跳出更新，暂+1代替。
+     'daida = Nz(DCount("*", "sm测验记录题页_今日当前_待答_题卷", "IsNull(作答) Or 有错"))
+     'Me.题数.Value = daida
+     'If jishi Then Me.速率.Value = (daidaY - daida) / (jishi * 1440)
+     
+     'Me.Refresh  '刷新全部
+     
+End Sub
+
+Private Sub 选项1k_Enter()
+     Me.Tab.SetFocus 'If Me.交卷.Visible Then Me.交卷.SetFocus
+     Call 选项1_Enter
+
+End Sub
+
+Private Sub 选项2k_Enter()
+     Me.Tab.SetFocus 'If Me.交卷.Visible Then Me.交卷.SetFocus
+     Call 选项2_Enter
+
+End Sub
+
+Private Sub 选项3k_Enter()
+     Me.Tab.SetFocus 'If Me.交卷.Visible Then Me.交卷.SetFocus
+     Call 选项3_Enter
+
+End Sub
+
+Private Sub 已暂停_Click()
+     Me.Tab.SetFocus
+     'Call 暂停_Click
+     Call Box1_Click
+     
+End Sub
+
+Private Sub 暂停_Click()
+     If Nz(Me.暂停) Then
+        ztks = Now
+        
+        'Me.暂停框.Visible = True  '处于前面遮挡其他控件。
+        'Me.提问.Visible = False   '因为暂停框挡不住。
+        Me.Title.Visible = False
+        Me.交卷.Visible = False
+        'Me.Box1.BorderStyle = 0
+        Me.Box1.BackStyle = 1  '处于前面遮挡其他控件。
+        Me.已暂停.Value = "已暂停，点击激活"
+        
+        mciSendString "pause " & playlj, vbNullString, 0, 0
+     Else
+        mciSendString "resume " & playlj, vbNullString, 0, 0
+        
+        'Me.暂停框.Visible = False
+        'Me.提问.Visible = True
+        Me.Title.Visible = True
+        Me.交卷.Visible = True
+        'Me.Box1.BorderStyle = 1
+        Me.Box1.BackStyle = 0  '背景透明化。
+        Me.已暂停.Value = ""
+        
+        If ztks Then zttime = zttime + (Now - ztks)
+        ztks = 0
+        'MessageBoxTimeout Me.hwnd, "停顿时长 " & Format(zttime, "h:nn:ss"), "学科训练室", 64, 0, 1500
+     End If
+
+End Sub
+
+Private Sub 最小化_Click()
+     On Error GoTo Err_最小化_Click
+
+     Me.SetFocus
+     DoCmd.Minimize  '窗体最小化
+
+Exit_最小化_Click:
+     Exit Sub
+
+Err_最小化_Click:
+     MsgBox Err.Description
+     Resume Exit_最小化_Click
+    
+End Sub
+
+
